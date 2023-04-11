@@ -6,10 +6,14 @@ import Pieces.Pieces;
 
 public class Main {
 
+    static Scanner scan = new Scanner(System.in);
+
     // Display main screen and options
     public static void main (String[] args) {
+        mainMenu();
+    }
 
-        Scanner scan = new Scanner(System.in);
+    public static void mainMenu() {
 
         System.out.println("===================================================================");
         System.out.println("  ####  #    # ######  ####   ####          #   ##   #    #   ##   ");
@@ -40,7 +44,6 @@ public class Main {
             break;
         }
 
-        scan.close();
     }
 
     // Initialize board and send it to the play loop
@@ -49,6 +52,7 @@ public class Main {
         Board board = new Board();
         board.constructBoard();
         board.printBoard();
+        System.out.println("[*]White to move");
         play(board);
 
     }
@@ -62,7 +66,7 @@ public class Main {
     public static void play(Board board) {
 
         boolean gameOver = false;
-        Scanner scan = new Scanner(System.in);
+        boolean whiteToMove = true;
         String input;
         String[] indexedInput;
 
@@ -93,26 +97,47 @@ public class Main {
                 Pieces currPiece = board.getPiece(prevCol, prevRow);
                 // Check that a piece exists on that square
                 if (currPiece != null) {
-                    // Check that the input piece matches the piece on the square
-                    if (piece.toLowerCase().equals(currPiece.getPiece().toLowerCase())) {
-                        // Check that the piece is able to move where they want to move it
-                        if (currPiece.canMove(board, prevCol, prevRow, col, row)) {
-                            board.movePiece(prevCol, prevRow, col, row);
-                            board.printBoard();
+                    // Check that piece being moved is in order of turn
+                    if (currPiece.isWhite() && whiteToMove || !currPiece.isWhite() && !whiteToMove) {
+                        // Check that the input piece matches the piece on the square
+                        if (piece.toLowerCase().equals(currPiece.getPiece().toLowerCase())) {
+                            // Check that the piece is able to move where they want to move it
+                            if (currPiece.canMove(board, prevCol, prevRow, col, row)) {
+                                if (board.checkmate(col, row)) {
+                                    System.out.println("[!]Game over!");
+                                    if (board.getPiece(col, row).isWhite()) {
+                                        System.out.println("[!]White wins!");
+                                    } else {
+                                        System.out.println("[!]Black wins!");
+                                    }
+                                    gameOver = true;
+                                }
+                                board.movePiece(prevCol, prevRow, col, row);
+                                whiteToMove = !whiteToMove;
+                                board.printBoard();
+                            } else {
+                                System.out.println("[!]Invalid move");
+                            }
                         } else {
-                            System.out.println("[!]Invalid move");
+                            System.out.println("[!]Invalid piece at " + indexedInput[1] + indexedInput[2]);
                         }
-                    } else {
-                        System.out.println("[!]Invalid piece at " + indexedInput[1] + indexedInput[2]);
                     }
                 } else {
                     System.out.println("[!]No piece exists at " + indexedInput[1] + indexedInput[2]);
                 }
             }
 
+            if (whiteToMove && !gameOver) {
+                System.out.println("[*]White to move");
+            } else {
+                System.out.println("[*]Black to move");
+            }
+
         }
 
-        scan.close();
+        System.out.println("[!]Press enter to return to the main menu");
+        input = scan.nextLine();
+        mainMenu();
     }
 
     // Convert alphabetic character to an integer to obtain column value

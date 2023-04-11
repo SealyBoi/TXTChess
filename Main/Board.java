@@ -44,7 +44,7 @@ public class Board {
     public boolean squareContainsAlly(int prevCol, int prevRow, int col, int row) {
         Pieces oldSquare = getPiece(prevCol, prevRow);
         Pieces newSquare = getPiece(col, row);
-        if (oldSquare.isWhite() && newSquare.isWhite()) {
+        if (oldSquare.isWhite() && newSquare.isWhite() || !oldSquare.isWhite() && !newSquare.isWhite()) {
             return true;
         }
         return false;
@@ -59,9 +59,17 @@ public class Board {
         return false;
     }
 
+    public boolean checkmate(int col, int row) {
+        Pieces piece = getPiece(col, row);
+        if (piece != null && piece.getPiece().toLowerCase().equals("k")) {
+            return true;
+        }
+        return false;
+    }
+
     public void printBoard() {
        for (int i = 0; i < 8; i++) {
-        System.out.print("|");
+        System.out.print(8 - i + " |");
         for (int j = 0; j < 8; j++) {
             if (board[i][j] != null) {
                 System.out.print(" " + board[i][j].getPiece() + " ");
@@ -72,5 +80,6 @@ public class Board {
         System.out.print("|");
         System.out.println();
        }
+       System.out.println("    a  b  c  d  e  f  g  h  ");
     }
 }
