@@ -30,6 +30,11 @@ public class Rook extends Pieces{
                     return false;
                 }
             }
+            for (int i = prevCol - 1; i > col; i--) {
+                if (!board.squareIsEmpty(i, row)) {
+                    return false;
+                }
+            }
             if (board.squareIsEmpty(col, row)) {
                 return true;
             } else if (board.squareContainsAlly(prevCol, prevRow, col, row)) {
@@ -38,6 +43,11 @@ public class Rook extends Pieces{
             return true;
         } else if (prevCol == col) {
             for (int i = prevRow + 1; i < row; i++) {
+                if (!board.squareIsEmpty(col, i)) {
+                    return false;
+                }
+            }
+            for (int i = prevRow - 1; i > row; i--) {
                 if (!board.squareIsEmpty(col, i)) {
                     return false;
                 }
