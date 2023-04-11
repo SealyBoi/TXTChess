@@ -56,7 +56,7 @@ public class Pawn extends Pieces{
         } else if (!board.getPiece(prevCol, prevRow).isWhite()) {
             if (prevRow - row <= maxMove && prevRow - row > 0 && prevCol == col) {
                 if (maxMove == 2 && prevRow - row == maxMove) {
-                    if (!board.squareIsEmpty(col, row - 1)) {
+                    if (!board.squareIsEmpty(col, row + 1)) {
                         return false;
                     }
                 }
