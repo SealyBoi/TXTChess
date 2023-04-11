@@ -10,7 +10,6 @@
 /*
 / NOTE All pieces have movement relative to how chess rules allow them to move.
 / NOTE En passant is not implemented.
-/ NOTE Pawn promotion is not implemented.
 / NOTE Checkmate is not implemented, the game ends when the king is captured.
 */
 

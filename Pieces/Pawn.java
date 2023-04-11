@@ -34,43 +34,33 @@ public class Pawn extends Pieces{
             maxMove = 1;
         }
         // Check whether the piece is white or black
+        int rowCalc;
+        int rowCheckCalc;
         if (board.getPiece(prevCol, prevRow).isWhite()) {
-            // Check if piece follows movement rules
-            if (row - prevRow <= maxMove && row - prevRow > 0 && prevCol == col) {
-                // Check if piece is not jumping over another piece when moving for first time
-                if (maxMove == 2 && row - prevRow == maxMove) {
-                    if (!board.squareIsEmpty(col, row - 1)) {
-                        return false;
-                    }
-                }
-                if (board.squareIsEmpty(col, row)) {
-                    return true;
-                } else if (board.squareContainsAlly(prevCol, prevRow, col, row)) {
-                    return false;
-                }
-            } else if (row - prevRow == 1 && col - prevCol == 1 || col - prevCol == -1) {
-                if (board.squareContainsEnemy(prevCol, prevRow, col, row)) {
-                    return true;
-                }
-            } 
-        } else if (!board.getPiece(prevCol, prevRow).isWhite()) {
-            if (prevRow - row <= maxMove && prevRow - row > 0 && prevCol == col) {
-                if (maxMove == 2 && prevRow - row == maxMove) {
-                    if (!board.squareIsEmpty(col, row + 1)) {
-                        return false;
-                    }
-                }
-                if (board.squareIsEmpty(col, row)) {
-                    return true;
-                } else if (board.squareContainsAlly(prevCol, prevRow, col, row)) {
-                    return false;
-                }
-            } else if (prevRow - row == 1 && col - prevCol == 1 || col - prevCol == -1) {
-                if (board.squareContainsEnemy(prevCol, prevRow, col, row)) {
-                    return true;
-                }
-            } 
+            rowCalc = row - prevRow;
+            rowCheckCalc = row + 1;
+        } else {
+            rowCalc = prevRow - row;
+            rowCheckCalc = row - 1;
         }
+        // Check if piece follows movement rules
+        if (rowCalc <= maxMove && rowCalc > 0 && prevCol == col) {
+            // Check if piece is not jumping over another piece when moving for first time
+            if (maxMove == 2 && rowCalc == maxMove) {
+                if (!board.squareIsEmpty(col, rowCheckCalc)) {
+                    return false;
+                }
+            }
+            if (board.squareIsEmpty(col, row)) {
+                return true;
+            } else if (board.squareContainsAlly(prevCol, prevRow, col, row)) {
+                return false;
+            }
+        } else if (rowCalc == 1 && col - prevCol == 1 || col - prevCol == -1) {
+            if (board.squareContainsEnemy(prevCol, prevRow, col, row)) {
+                return true;
+            }
+        } 
         return false;
     }
     

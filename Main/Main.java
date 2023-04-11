@@ -103,6 +103,9 @@ public class Main {
                         if (piece.toLowerCase().equals(currPiece.getPiece().toLowerCase())) {
                             // Check that the piece is able to move where they want to move it
                             if (currPiece.canMove(board, prevCol, prevRow, col, row)) {
+                                if (currPiece.getPiece().toLowerCase().equals("p") && (row == 7 && currPiece.isWhite()) || row == 0 && !currPiece.isWhite()) {
+                                    board.promotePiece(prevCol, prevRow);
+                                }
                                 if (board.checkmate(col, row)) {
                                     System.out.println("[!]Game over!");
                                     if (board.getPiece(col, row).isWhite()) {

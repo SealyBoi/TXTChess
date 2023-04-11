@@ -1,4 +1,6 @@
 package Main;
+import java.util.Scanner;
+
 import Pieces.*;
 
 public class Board {
@@ -30,6 +32,45 @@ public class Board {
     public void movePiece(int prevCol, int prevRow, int col, int row) {
         board[7 - row][col] = board[7 - prevRow][prevCol];
         board[7 - prevRow][prevCol] = null;
+    }
+
+    public void promotePiece(int col, int row) {
+        Scanner scan = new Scanner(System.in);
+
+        System.out.println("Select a promotion: ");
+        System.out.println("-Rook (r)");
+        System.out.println("-Knight (n)");
+        System.out.println("-Bishop (b)");
+        System.out.println("-Queen (q)");
+
+        String input = scan.nextLine();
+        while (!input.toLowerCase().equals("r") && !input.toLowerCase().equals("b") && !input.toLowerCase().equals("n") && !input.toLowerCase().equals("q")) {
+            System.out.println("Select a promotion: ");
+            System.out.println("-Rook (r)");
+            System.out.println("-Knight (n)");
+            System.out.println("-Bishop (b)");
+            System.out.println("-Queen (q)");
+            input = scan.nextLine();
+        }
+
+        Pieces currPiece = getPiece(col, row);
+        Pieces promotion = getPiece(col, row);
+        switch (input.toLowerCase()) {
+            case "r":
+                promotion = new Rook(currPiece.isWhite() ? "r" : "R", currPiece.isWhite());
+            break;
+            case "n":
+                promotion = new Knight(currPiece.isWhite() ? "k" : "K", currPiece.isWhite());
+            break;
+            case "b":
+                promotion = new Bishop(currPiece.isWhite() ? "b" : "B", currPiece.isWhite());
+            break;
+            case "q":
+                promotion = new Queen(currPiece.isWhite() ? "q" : "Q", currPiece.isWhite());
+            break;
+        }
+
+        board[7 - row][col] = promotion;
     }
 
     public boolean squareIsEmpty(int col, int row) {
