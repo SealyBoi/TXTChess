@@ -8,9 +8,10 @@
 ===================================================================
 
 /*
-/ NOTE The only implemented pieces as of now are Pawns and Rooks.
-/ NOTE Other pieces will move, but they do not follow chess movement rules.
-/ NOTE Pawns and Rooks are the only ones that follow chess movement rules.
+/ NOTE All pieces have movement relative to how chess rules allow them to move.
+/ NOTE En passant is not implemented.
+/ NOTE Pawn promotion is not implemented.
+/ NOTE Checkmate is not implemented, the game ends when the king is captured.
 */
 
 / * THIS IS STILL A WORK IN PROGRESS * /
@@ -20,6 +21,9 @@ This is my rendition of chess, but in a txt format.
 There is very minor error handling when it comes to making incorrect
 moves as I was more concerned about creating a complete version. I will probably add error handling later on after my
 friends tell me they keep losing matches because it crashes anytime they accidentally type the wrong thing.
+
+To compile, simply type 'make' in the txtchess directory.
+To launch application, simply type 'java Main/Main'.
 
 To play simply type the format of "{piece}{currCol}{currRow}{col}{row}" where:
     -'piece' can be p, r, n, b, q, k (pawn, rook, knight, bishop, queen, king respectively)
