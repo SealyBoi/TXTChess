@@ -35,7 +35,6 @@ public class Pawn extends Pieces{
         }
         // Check whether the piece is white or black
         int rowCalc;
-        int rowCheckCalc;
         if (board.getPiece(prevCol, prevRow).isWhite()) {
             rowCalc = row - prevRow;
         } else {

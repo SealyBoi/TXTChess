@@ -128,6 +128,123 @@ public class Board {
         return false;
     }
 
+    public boolean moveWouldCauseCheck(int prevCol, int prevRow) {
+        King king;
+        if (getPiece(prevCol, prevRow).isWhite()) {
+            king = (King) whiteKing;
+        } else {
+            king = (King) blackKing;
+        }
+        int col = king.getPosition()[0];
+        int row = king.getPosition()[1];
+        int dir = 0;
+        if (prevCol == col) {
+            for (int i = prevRow + 1; i < row; i++) {
+                if (!squareIsEmpty(col, i)) {
+                    dir = -1;
+                    return false;
+                }
+            }
+            for (int i = prevRow - 1; i > row; i--) {
+                if (!squareIsEmpty(col, i)) {
+                    dir = 1;
+                    return false;
+                }
+            }
+            int checkRow = prevRow + dir;
+            while (checkRow != 0 && checkRow != 7) {
+                if (!squareIsEmpty(col, checkRow)) {
+                    Pieces piece = getPiece(col, checkRow);
+                    if (piece.isWhite() == king.isWhite()) {
+                        return false;
+                    } else {
+                        String pType = piece.getPiece().toLowerCase();
+                        if (pType.equals("q") || pType.equals("r")) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+                checkRow += dir;
+            }
+            return false;
+        } else if (prevRow == row) {
+            for (int i = prevCol + 1; i < col; i++) {
+                if (!squareIsEmpty(i, row)) {
+                    dir = -1;
+                    return false;
+                }
+            }
+            for (int i = prevCol - 1; i > col; i--) {
+                if (!squareIsEmpty(i, row)) {
+                    dir = 1;
+                    return false;
+                }
+            }
+            int checkCol = prevCol + dir;
+            while (checkCol != 0 && checkCol != 7) {
+                if (!squareIsEmpty(checkCol, row)) {
+                    Pieces piece = getPiece(checkCol, row);
+                    if (piece.isWhite() == king.isWhite()) {
+                        return false;
+                    } else {
+                        String pType = piece.getPiece().toLowerCase();
+                        if (pType.equals("q") || pType.equals("r")) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+                checkCol += dir;
+            }
+            return false;
+        } else if (Math.abs(col - prevCol) == Math.abs(row - prevRow)) {
+            int colIncrement;
+            int rowIncrement;
+            if (col > prevCol) {
+                colIncrement = 1;
+            } else {
+                colIncrement = -1;
+            }
+            if (row > prevRow) {
+                rowIncrement = 1;
+            } else {
+                rowIncrement = -1;
+            }
+            int j = prevRow + rowIncrement;
+            for (int i = prevCol + colIncrement; i != col; i += colIncrement) {
+                if (!squareIsEmpty(i, j)) {
+                    return false;
+                }
+                j += rowIncrement;
+            }
+            colIncrement *= -1;
+            rowIncrement *= -1;
+            j = prevRow + rowIncrement;
+            for (int i = prevCol + colIncrement; i != col; i += colIncrement) {
+                if (!squareIsEmpty(i, j)) {
+                    Pieces piece = getPiece(i, j);
+                    if (piece.isWhite() == king.isWhite()) {
+                        return false;
+                    } else {
+                        String pType = piece.getPiece().toLowerCase();
+                        if (pType.equals("b") || pType.equals("q")) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+                j += rowIncrement;
+            }
+            return false;
+        } else {
+            return false;
+        }
+    }
+
     public boolean checkForMate() {
         FreeSquare fsThread = new FreeSquare();
         Interceptor iThread = new Interceptor();

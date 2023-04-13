@@ -67,12 +67,27 @@ public class Check extends Thread {
     }
 
     public void run() {
-        // Check Lane1 for attacking pieces
+        // TODO Check Lane1 for attacking pieces
+
+        // TODO Check Lane2 for attacking pieces
+
+        // TODO Check Lane3 for attacking pieces
+
+        // TODO Check Lane4 for attacking pieces
+
+        // TODO Check Lane5 for attacking piecces
+
+        // TODO Check Lane6 for attacking pieces
+
+        // TODO Check Lane7 for attacking pieces
+
+        // TODO Check Lane8 for attacking pieces
+
     }
  }
 
  /*
-  * For knights, we will have the next eight lanes be checked in KnightChecking
+  * For knights, we will have the next eight lanes be checked in KnightChecking (labeled as Knight1, Knight2, etc.)
   * [ - 1 - 2 - ]
   * [ 3 - - - 4 ]
   * [ - - k - - ]
@@ -98,6 +113,21 @@ public class Check extends Thread {
     }
 
     public void run() {
-        // Check Knight1 for attacking piece
+        // TODO Check Knight1 for attacking piece
+
+        // TODO Check Knight2 for attacking piece
+
+        // TODO Check Knight3 for attacking piece
+
+        // TODO Check Knight4 for attacking piece
+
+        // TODO Check Knight5 for attacking piece
+
+        // TODO Check Knight6 for attacking piece
+
+        // TODO Check Knight7 for attacking piece
+
+        // TODO Check Knight8 for attacking piece
+
     }
   }
