@@ -5,6 +5,10 @@ JC = javac
 		$(JC) $(JFLAGS) $*.java
 
 CLASSES = \
+		CheckmateValidation/Check.java \
+		CheckmateValidation/Counter.java \
+		CheckmateValidation/FreeSquare.java \
+		CheckmateValidation/Interceptor.java \
 		Pieces/Bishop.java \
 		Pieces/King.java \
 		Pieces/Knight.java \

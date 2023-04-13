@@ -106,18 +106,12 @@ public class Main {
                                 if (currPiece.getPiece().toLowerCase().equals("p") && (row == 7 && currPiece.isWhite()) || row == 0 && !currPiece.isWhite()) {
                                     board.promotePiece(prevCol, prevRow);
                                 }
-                                if (board.checkmate(col, row)) {
-                                    System.out.println("[!]Game over!");
-                                    if (board.getPiece(col, row).isWhite()) {
-                                        System.out.println("[!]White wins!");
-                                    } else {
-                                        System.out.println("[!]Black wins!");
-                                    }
-                                    gameOver = true;
-                                }
                                 board.movePiece(prevCol, prevRow, col, row);
                                 whiteToMove = !whiteToMove;
                                 board.printBoard();
+                                if (board.inCheck()) {
+                                    // TODO if mated, end game
+                                }
                             } else {
                                 System.out.println("[!]Invalid move");
                             }

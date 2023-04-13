@@ -1,18 +1,25 @@
 package Main;
 import java.util.Scanner;
 
+import CheckmateValidation.Check;
+import CheckmateValidation.Counter;
+import CheckmateValidation.FreeSquare;
+import CheckmateValidation.Interceptor;
 import Pieces.*;
 
 public class Board {
+    Pieces whiteKing = new King("k", true, 4, 0);
+    Pieces blackKing = new King("K", false, 4, 7);
+
     private Pieces[][] startingBoard = {
-        {new Rook("R",false), new Knight("N",false), new Bishop("B",false), new Queen("Q",false), new King("K",false), new Bishop("B",false), new Knight("N",false), new Rook("R",false)},
+        {new Rook("R",false), new Knight("N",false), new Bishop("B",false), new Queen("Q",false), blackKing, new Bishop("B",false), new Knight("N",false), new Rook("R",false)},
         {new Pawn("P", false), new Pawn("P", false), new Pawn("P", false), new Pawn("P", false), new Pawn("P", false), new Pawn("P", false), new Pawn("P", false), new Pawn("P", false)},
         {null, null, null, null, null, null, null, null},
         {null, null, null, null, null, null, null, null},
         {null, null, null, null, null, null, null, null},
         {null, null, null, null, null, null, null, null},
         {new Pawn("p", true), new Pawn("p", true), new Pawn("p", true), new Pawn("p", true), new Pawn("p", true), new Pawn("p", true), new Pawn("p", true), new Pawn("p", true)},
-        {new Rook("r",true), new Knight("n",true), new Bishop("b",true), new Queen("q",true), new King("k",true), new Bishop("b",true), new Knight("n",true), new Rook("r",true)},
+        {new Rook("r",true), new Knight("n",true), new Bishop("b",true), new Queen("q",true), whiteKing, new Bishop("b",true), new Knight("n",true), new Rook("r",true)},
     };
 
     private static Pieces[][] board;
@@ -31,6 +38,15 @@ public class Board {
 
     public void movePiece(int prevCol, int prevRow, int col, int row) {
         board[7 - row][col] = board[7 - prevRow][prevCol];
+        King king;
+        if (getPiece(prevCol, prevRow).isWhite()) {
+            king = (King) whiteKing;
+        } else {
+            king = (King) blackKing;
+        }
+        if (king.getPosition()[0] == prevCol && king.getPosition()[1] == prevRow) {
+            king.updatePosition(col, row);
+        }
         board[7 - prevRow][prevCol] = null;
     }
 
@@ -100,11 +116,25 @@ public class Board {
         return false;
     }
 
-    public boolean checkmate(int col, int row) {
-        Pieces piece = getPiece(col, row);
-        if (piece != null && piece.getPiece().toLowerCase().equals("k")) {
-            return true;
+    public boolean inCheck() {
+        Check chThread = new Check(board, whiteKing, blackKing);
+        chThread.start();
+        try {
+            chThread.join();
+            return chThread.kingInCheck();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        return false;
+    }
+
+    public boolean checkForMate() {
+        FreeSquare fsThread = new FreeSquare();
+        Interceptor iThread = new Interceptor();
+        Counter cThread = new Counter();
+        fsThread.start();
+        iThread.start();
+        cThread.start();
         return false;
     }
 

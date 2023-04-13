@@ -38,16 +38,14 @@ public class Pawn extends Pieces{
         int rowCheckCalc;
         if (board.getPiece(prevCol, prevRow).isWhite()) {
             rowCalc = row - prevRow;
-            rowCheckCalc = row + 1;
         } else {
             rowCalc = prevRow - row;
-            rowCheckCalc = row - 1;
         }
         // Check if piece follows movement rules
         if (rowCalc <= maxMove && rowCalc > 0 && prevCol == col) {
             // Check if piece is not jumping over another piece when moving for first time
             if (maxMove == 2 && rowCalc == maxMove) {
-                if (!board.squareIsEmpty(col, rowCheckCalc)) {
+                if (!board.squareIsEmpty(col, row)) {
                     return false;
                 }
             }
