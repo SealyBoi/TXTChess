@@ -10,6 +10,7 @@
 /*
 / NOTE Castling is not implemented.
 / NOTE En passant is not implemented.
+/ NOTE Check is halfway implemented. You can be put in check by knights and by any diagonal attacks. (pawns, queens, bishops, etc.)
 / NOTE Checkmate is not implemented, the game ends when the king is captured.
 */
 
@@ -17,9 +18,9 @@
 
 This is my rendition of chess, but in a txt format.
 
-There is very minor error handling when it comes to making incorrect
-moves as I was more concerned about creating a complete version. I will probably add error handling later on after my
-friends tell me they keep losing matches because it crashes anytime they accidentally type the wrong thing.
+There is very minor error handling when it comes to making incorrect moves as  I was more concerned 
+about creating a complete version. I will probably add error handling later on after my friends tell 
+me they keep losing matches because it crashes anytime they accidentally type the wrong thing.
 
 To compile, simply type 'make' in the txtchess directory.
 To launch application, simply type 'java Main/Main'.

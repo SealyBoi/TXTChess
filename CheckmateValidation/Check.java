@@ -1,17 +1,20 @@
 package CheckmateValidation;
 
+import Pieces.King;
 import Pieces.Pieces;
 
 public class Check extends Thread {
 
     Pieces[][] board;
-    Pieces whiteKing;
-    Pieces blackKing;
+    boolean isWhite;
+    int col;
+    int row;
 
-    public Check (Pieces[][] board, Pieces whiteKing, Pieces blackKing) {
+    public Check (Pieces[][] board, boolean isWhite, int col, int row) {
         this.board = board;
-        this.whiteKing = whiteKing;
-        this.blackKing = blackKing;
+        this.isWhite = isWhite;
+        this.col = col;
+        this.row = row;
     }
 
     boolean inCheck = false;
@@ -22,8 +25,8 @@ public class Check extends Thread {
 
     public void run() {
         // Check all lanes and knight positions from king to see if there is an attacking piece
-        LaneChecking lcThread = new LaneChecking(board, whiteKing, blackKing);
-        KnightChecking kcThread = new KnightChecking(board, whiteKing, blackKing);
+        LaneChecking lcThread = new LaneChecking(board, isWhite, col, row);
+        KnightChecking kcThread = new KnightChecking(board, isWhite, col, row);
 
         lcThread.start();
         kcThread.start();
@@ -51,16 +54,19 @@ public class Check extends Thread {
 
  class LaneChecking extends Thread {
     Pieces[][] board;
-    Pieces whiteKing;
-    Pieces blackKing;
+    boolean isWhite;
+    int col;
+    int row;
 
-    public LaneChecking (Pieces[][] board, Pieces whiteKing, Pieces blackKing) {
+    public LaneChecking (Pieces[][] board, boolean isWhite, int col, int row) {
         this.board = board;
-        this.whiteKing = whiteKing;
-        this.blackKing = blackKing;
+        this.isWhite = isWhite;
+        this.col = col;
+        this.row = row;
     }
 
     boolean attacker = false;
+    boolean lock = false;
 
     public boolean isAttacking() {
         return attacker;
@@ -68,20 +74,72 @@ public class Check extends Thread {
 
     public void run() {
         // TODO Check Lane1 for attacking pieces
+        if (checkDiag(col, row, isWhite, -1, 1) && !lock) {
+            attacker = true;
+            lock = true;
+        }
 
         // TODO Check Lane2 for attacking pieces
 
         // TODO Check Lane3 for attacking pieces
+        if (checkDiag(col, row, isWhite, 1, 1) && !lock) {
+            attacker = true;
+            lock = true;
+        }
 
         // TODO Check Lane4 for attacking pieces
 
         // TODO Check Lane5 for attacking piecces
 
         // TODO Check Lane6 for attacking pieces
+        if (checkDiag(col, row, isWhite, -1, -1) && !lock) {
+            attacker = true;
+            lock = true;
+        }
 
         // TODO Check Lane7 for attacking pieces
 
         // TODO Check Lane8 for attacking pieces
+        if (checkDiag(col, row, isWhite, 1, -1) && !lock) {
+            attacker = true;
+            lock = true;
+        }
+
+    }
+
+    public boolean checkDiag(int col, int row, boolean isWhite, int incCol, int incRow) {
+        int checkCol = col;
+        int checkRow = row;
+        while (checkCol + incCol >= 0 && checkCol + incCol <= 7 && checkRow + incRow >= 0 && checkRow + incRow <= 7) {
+            checkCol += incCol;
+            checkRow += incRow;
+            Pieces p = board[7 - checkRow][checkCol];
+            if (p != null) {
+                if (p.isWhite() != isWhite) {
+                    String pType = p.getPiece().toLowerCase();
+                    System.out.println(pType);
+                    if (checkCol == col - 1 || checkCol == col + 1) {
+                        if (!isWhite && checkRow == row - 1) {
+                            if (pType.equals("p")) {
+                                return true;
+                            }
+                        } else if (isWhite && checkRow == row + 1) {
+                            if (pType.equals("p")) {
+                                return true;
+                            }
+                        }
+                    }
+                    if (pType.equals("q") || pType.equals("b")) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public void checkLane() {
 
     }
  }
@@ -97,37 +155,105 @@ public class Check extends Thread {
 
   class KnightChecking extends Thread {
     Pieces[][] board;
-    Pieces whiteKing;
-    Pieces blackKing;
+    boolean isWhite;
+    int col;
+    int row;
 
-    public KnightChecking (Pieces[][] board, Pieces whiteKing, Pieces blackKing) {
+    public KnightChecking (Pieces[][] board, boolean isWhite, int col, int row) {
         this.board = board;
-        this.whiteKing = whiteKing;
-        this.blackKing = blackKing;
+        this.isWhite = isWhite;
+        this.col = col;
+        this.row = row;
     }
 
     boolean attacker = false;
+    boolean lock = false;
 
     public boolean isAttacking() {
         return attacker;
     }
 
     public void run() {
-        // TODO Check Knight1 for attacking piece
 
-        // TODO Check Knight2 for attacking piece
+        // Check Knight1 for attacking piece
+        if (col - 1 >= 0 && row + 2 <= 7 && !lock) {
+            if (checkPos(col - 1, row + 2, isWhite)) {
+                attacker = true;
+                lock = true;
+            }
+        }
 
-        // TODO Check Knight3 for attacking piece
+        // Check Knight2 for attacking piece
+        if (col + 1 <= 7 && row + 2 <= 7 && !lock) {
+            if (checkPos(col + 1, row + 2, isWhite)) {
+                attacker = true;
+                lock = true;
+            }
+        }
 
-        // TODO Check Knight4 for attacking piece
+        // Check Knight3 for attacking piece
+        if (col - 2 >= 0 && row + 1 <= 7 && !lock) {
+            if (checkPos(col - 2, row + 1, isWhite)) {
+                attacker = true;
+                lock = true;
+            }
+        }
 
-        // TODO Check Knight5 for attacking piece
+        // Check Knight4 for attacking piece
+        if (col + 2 <= 7 && row + 1 <= 7 && !lock) {
+            if (checkPos(col + 2, row + 1, isWhite)) {
+                attacker = true;
+                lock = true;
+            }
+        }
 
-        // TODO Check Knight6 for attacking piece
+        // Check Knight5 for attacking piece
+        if (col - 2 >= 0 && row - 1 >= 0 && !lock) {
+            if (checkPos(col - 2, row - 1, isWhite)) {
+                attacker = true;
+                lock = true;
+            }
+        }
 
-        // TODO Check Knight7 for attacking piece
+        // Check Knight6 for attacking piece
+        if (col + 2 <= 7 && row - 1 >= 0 && !lock) {
+            if (checkPos(col + 2, row - 1, isWhite)) {
+                attacker = true;
+                lock = true;
+            }
+        }
 
-        // TODO Check Knight8 for attacking piece
+        // Check Knight7 for attacking piece
+        if (col - 1 >= 0 && row - 2 >= 0 && !lock) {
+            if (checkPos(col - 1, row - 2, isWhite)) {
+                attacker = true;
+                lock = true;
+            }
+        }
 
+        // Check Knight8 for attacking piece
+        if (col + 1 <= 7 && row - 2 >= 0 && !lock) {
+            if (checkPos(col + 1, row - 2, isWhite)) {
+                attacker = true;
+                lock = true;
+            }
+        }
+
+        if (!lock) {
+            attacker = false;
+        }
+
+    }
+
+    public boolean checkPos(int col, int row, boolean isWhite) {
+        Pieces p;
+
+        p = board[7 - row][col];
+        if (p != null) {
+            if (p.isWhite() != isWhite && p.getPiece().toLowerCase().equals("n")) {
+                return true;
+            }
+        }
+        return false;
     }
   }

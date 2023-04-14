@@ -116,8 +116,16 @@ public class Board {
         return false;
     }
 
-    public boolean inCheck() {
-        Check chThread = new Check(board, whiteKing, blackKing);
+    // Method called to check position of King after King has moved
+    public boolean inCheck(boolean whiteToMove, int newCol, int newRow) {
+        Check chThread;
+        King k;
+        if (whiteToMove) {
+            k = (King) whiteKing;
+        } else {
+            k = (King) blackKing;
+        }
+        chThread = new Check(board, k.isWhite(), newCol, newRow);
         chThread.start();
         try {
             chThread.join();
@@ -128,7 +136,27 @@ public class Board {
         return false;
     }
 
-    public boolean moveWouldCauseCheck(int prevCol, int prevRow) {
+    // Method called to check position of King at end of turn
+    public boolean inCheck(boolean whiteToMove) {
+        Check chThread;
+        King k;
+        if (whiteToMove) {
+            k = (King) whiteKing;
+        } else {
+            k = (King) blackKing;
+        }
+        chThread = new Check(board, k.isWhite(), k.getPosition()[0], k.getPosition()[1]);
+        chThread.start();
+        try {
+            chThread.join();
+            return chThread.kingInCheck();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean moveWouldCauseCheck(int prevCol, int prevRow, int newCol, int newRow) {
         King king;
         if (getPiece(prevCol, prevRow).isWhite()) {
             king = (King) whiteKing;
@@ -138,18 +166,24 @@ public class Board {
         int col = king.getPosition()[0];
         int row = king.getPosition()[1];
         int dir = 0;
-        if (prevCol == col) {
+        if (getPiece(prevCol, prevRow).getPiece().toLowerCase().equals("k")) {
+            if (king.isWhite()) {
+                return inCheck(true, newCol, newRow);
+            } else {
+                return inCheck(false, newCol, newRow);
+            }
+        } else if (prevCol == col) {
             for (int i = prevRow + 1; i < row; i++) {
                 if (!squareIsEmpty(col, i)) {
-                    dir = -1;
                     return false;
                 }
+                dir = -1;
             }
             for (int i = prevRow - 1; i > row; i--) {
                 if (!squareIsEmpty(col, i)) {
-                    dir = 1;
                     return false;
                 }
+                dir = 1;
             }
             int checkRow = prevRow + dir;
             while (checkRow != 0 && checkRow != 7) {
@@ -223,7 +257,7 @@ public class Board {
             colIncrement *= -1;
             rowIncrement *= -1;
             j = prevRow + rowIncrement;
-            for (int i = prevCol + colIncrement; i != col; i += colIncrement) {
+            for (int i = prevCol + colIncrement; i >= 0 && i <= 7; i += colIncrement) {
                 if (!squareIsEmpty(i, j)) {
                     Pieces piece = getPiece(i, j);
                     if (piece.isWhite() == king.isWhite()) {

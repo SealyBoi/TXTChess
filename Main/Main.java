@@ -103,18 +103,22 @@ public class Main {
                         if (piece.toLowerCase().equals(currPiece.getPiece().toLowerCase())) {
                             // Check that the piece is able to move where they want to move it
                             if (currPiece.canMove(board, prevCol, prevRow, col, row)) {
-                                if (!board.moveWouldCauseCheck(prevCol, prevRow)) {
+                                if (!board.moveWouldCauseCheck(prevCol, prevRow, col, row)) {
                                     if (currPiece.getPiece().toLowerCase().equals("p") && (row == 7 && currPiece.isWhite()) || row == 0 && !currPiece.isWhite()) {
                                         board.promotePiece(prevCol, prevRow);
                                     }
                                     board.movePiece(prevCol, prevRow, col, row);
                                     whiteToMove = !whiteToMove;
                                     board.printBoard();
-                                    if (board.inCheck()) {
-                                        // TODO if mated, end game
+                                    if (board.inCheck(whiteToMove)) {
+                                        if (board.checkForMate()) {
+                                            // TODO Check for mate
+                                        } else {
+                                            System.out.println("Check!");
+                                        }
                                     }
                                 } else {
-                                    System.out.println("[!]Invalid move");
+                                    System.out.println("[!]Cannot Self Check");
                                 }
                             } else {
                                 System.out.println("[!]Invalid move");
