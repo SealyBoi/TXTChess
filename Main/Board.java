@@ -8,9 +8,14 @@ import CheckmateValidation.Interceptor;
 import Pieces.*;
 
 public class Board {
+    // Save both kings for later reference
     Pieces whiteKing = new King("k", true, 4, 0);
     Pieces blackKing = new King("K", false, 4, 7);
 
+    // Open Scanner for User Input
+    static Scanner scan = new Scanner(System.in);
+
+    // Create initial board state
     private Pieces[][] startingBoard = {
         {new Rook("R",false), new Knight("N",false), new Bishop("B",false), new Queen("Q",false), blackKing, new Bishop("B",false), new Knight("N",false), new Rook("R",false)},
         {new Pawn("P", false), new Pawn("P", false), new Pawn("P", false), new Pawn("P", false), new Pawn("P", false), new Pawn("P", false), new Pawn("P", false), new Pawn("P", false)},
@@ -22,12 +27,15 @@ public class Board {
         {new Rook("r",true), new Knight("n",true), new Bishop("b",true), new Queen("q",true), whiteKing, new Bishop("b",true), new Knight("n",true), new Rook("r",true)},
     };
 
+    // Create current board state
     private static Pieces[][] board;
 
+    // Construct board for new game
     public void constructBoard() {
         board = startingBoard;
     }
 
+    // Get piece from board
     public Pieces getPiece(int col, int row) {
         if (board[7 - row][col] != null) {
             return board[7 - row][col];
@@ -36,6 +44,7 @@ public class Board {
         }
     }
 
+    // Move piece from previous position to new position
     public void movePiece(int prevCol, int prevRow, int col, int row) {
         board[7 - row][col] = board[7 - prevRow][prevCol];
         King king;
@@ -44,22 +53,17 @@ public class Board {
         } else {
             king = (King) blackKing;
         }
+        // If piece being moved is King, update King's position as well
         if (king.getPosition()[0] == prevCol && king.getPosition()[1] == prevRow) {
             king.updatePosition(col, row);
         }
         board[7 - prevRow][prevCol] = null;
     }
 
+    // Promote pawn to another piece
     public void promotePiece(int col, int row) {
-        Scanner scan = new Scanner(System.in);
-
-        System.out.println("Select a promotion: ");
-        System.out.println("-Rook (r)");
-        System.out.println("-Knight (n)");
-        System.out.println("-Bishop (b)");
-        System.out.println("-Queen (q)");
-
-        String input = scan.nextLine();
+        String input = "";
+        // Input validation
         while (!input.toLowerCase().equals("r") && !input.toLowerCase().equals("b") && !input.toLowerCase().equals("n") && !input.toLowerCase().equals("q")) {
             System.out.println("Select a promotion: ");
             System.out.println("-Rook (r)");
@@ -89,6 +93,7 @@ public class Board {
         board[7 - row][col] = promotion;
     }
 
+    // Check if square does not contain a piece
     public boolean squareIsEmpty(int col, int row) {
         Pieces square = getPiece(col, row);
         if (square == null) {
@@ -98,6 +103,7 @@ public class Board {
         }
     }
 
+    // Check if square contains a friendly piece
     public boolean squareContainsAlly(int prevCol, int prevRow, int col, int row) {
         Pieces oldSquare = getPiece(prevCol, prevRow);
         Pieces newSquare = getPiece(col, row);
@@ -107,6 +113,7 @@ public class Board {
         return false;
     }
 
+    // Check if square contains an opponent's piece
     public boolean squareContainsEnemy(int prevCol, int prevRow, int col, int row) {
         Pieces oldSquare = getPiece(prevCol, prevRow);
         Pieces newSquare = getPiece(col, row);
@@ -156,6 +163,7 @@ public class Board {
         return false;
     }
 
+    // Method called to check if a move would put player into check
     public boolean moveWouldCauseCheck(int prevCol, int prevRow, int newCol, int newRow) {
         King king;
         if (getPiece(prevCol, prevRow).isWhite()) {
@@ -163,122 +171,29 @@ public class Board {
         } else {
             king = (King) blackKing;
         }
-        int col = king.getPosition()[0];
-        int row = king.getPosition()[1];
-        int dir = 0;
+        // If the piece moving is the king, check if he is moving into check
         if (getPiece(prevCol, prevRow).getPiece().toLowerCase().equals("k")) {
             if (king.isWhite()) {
                 return inCheck(true, newCol, newRow);
             } else {
                 return inCheck(false, newCol, newRow);
             }
-        } else if (prevCol == col) {
-            for (int i = prevRow + 1; i < row; i++) {
-                if (!squareIsEmpty(col, i)) {
-                    return false;
-                }
-                dir = -1;
-            }
-            for (int i = prevRow - 1; i > row; i--) {
-                if (!squareIsEmpty(col, i)) {
-                    return false;
-                }
-                dir = 1;
-            }
-            int checkRow = prevRow + dir;
-            while (checkRow != 0 && checkRow != 7) {
-                if (!squareIsEmpty(col, checkRow)) {
-                    Pieces piece = getPiece(col, checkRow);
-                    if (piece.isWhite() == king.isWhite()) {
-                        return false;
-                    } else {
-                        String pType = piece.getPiece().toLowerCase();
-                        if (pType.equals("q") || pType.equals("r")) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                }
-                checkRow += dir;
-            }
-            return false;
-        } else if (prevRow == row) {
-            for (int i = prevCol + 1; i < col; i++) {
-                if (!squareIsEmpty(i, row)) {
-                    dir = -1;
-                    return false;
-                }
-            }
-            for (int i = prevCol - 1; i > col; i--) {
-                if (!squareIsEmpty(i, row)) {
-                    dir = 1;
-                    return false;
-                }
-            }
-            int checkCol = prevCol + dir;
-            while (checkCol != 0 && checkCol != 7) {
-                if (!squareIsEmpty(checkCol, row)) {
-                    Pieces piece = getPiece(checkCol, row);
-                    if (piece.isWhite() == king.isWhite()) {
-                        return false;
-                    } else {
-                        String pType = piece.getPiece().toLowerCase();
-                        if (pType.equals("q") || pType.equals("r")) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                }
-                checkCol += dir;
-            }
-            return false;
-        } else if (Math.abs(col - prevCol) == Math.abs(row - prevRow)) {
-            int colIncrement;
-            int rowIncrement;
-            if (col > prevCol) {
-                colIncrement = 1;
+        }
+        // Else check if moving the piece would put the player into check
+        else {
+            movePiece(prevCol, prevRow, newCol, newRow);
+            boolean causeCheck = false;
+            if (king.isWhite()) {
+                causeCheck = inCheck(true);
             } else {
-                colIncrement = -1;
+                causeCheck = inCheck(false);
             }
-            if (row > prevRow) {
-                rowIncrement = 1;
-            } else {
-                rowIncrement = -1;
-            }
-            int j = prevRow + rowIncrement;
-            for (int i = prevCol + colIncrement; i != col; i += colIncrement) {
-                if (!squareIsEmpty(i, j)) {
-                    return false;
-                }
-                j += rowIncrement;
-            }
-            colIncrement *= -1;
-            rowIncrement *= -1;
-            j = prevRow + rowIncrement;
-            for (int i = prevCol + colIncrement; i >= 0 && i <= 7; i += colIncrement) {
-                if (!squareIsEmpty(i, j)) {
-                    Pieces piece = getPiece(i, j);
-                    if (piece.isWhite() == king.isWhite()) {
-                        return false;
-                    } else {
-                        String pType = piece.getPiece().toLowerCase();
-                        if (pType.equals("b") || pType.equals("q")) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                }
-                j += rowIncrement;
-            }
-            return false;
-        } else {
-            return false;
+            movePiece(newCol, newRow, prevCol, prevRow);
+            return causeCheck;
         }
     }
 
+    // Method called to check if player is in checkmate
     public boolean checkForMate() {
         FreeSquare fsThread = new FreeSquare();
         Interceptor iThread = new Interceptor();
@@ -289,8 +204,22 @@ public class Board {
         return false;
     }
 
-    public void printBoard() {
-       for (int i = 0; i < 8; i++) {
+    // Print current board
+    public void printBoard(boolean whiteToMove) {
+        int goal;
+        int increment;
+        int start;
+        // Print board depending on which player's turn it is
+        if (whiteToMove) {
+            start = 0;
+            goal = 8;
+            increment = 1;
+        } else {
+            start = 7;
+            goal = -1;
+            increment = -1;
+        }
+       for (int i = start; i != goal; i += increment) {
         System.out.print(8 - i + " |");
         for (int j = 0; j < 8; j++) {
             if (board[i][j] != null) {

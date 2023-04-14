@@ -1,6 +1,5 @@
 package CheckmateValidation;
 
-import Pieces.King;
 import Pieces.Pieces;
 
 public class Check extends Thread {
@@ -73,7 +72,7 @@ public class Check extends Thread {
     }
 
     public void run() {
-        // TODO Check Lane1 for attacking pieces
+        // Check Lane1 for attacking pieces
         if (checkDiag(col, row, isWhite, -1, 1) && !lock) {
             attacker = true;
             lock = true;
@@ -81,7 +80,7 @@ public class Check extends Thread {
 
         // TODO Check Lane2 for attacking pieces
 
-        // TODO Check Lane3 for attacking pieces
+        // Check Lane3 for attacking pieces
         if (checkDiag(col, row, isWhite, 1, 1) && !lock) {
             attacker = true;
             lock = true;
@@ -91,7 +90,7 @@ public class Check extends Thread {
 
         // TODO Check Lane5 for attacking piecces
 
-        // TODO Check Lane6 for attacking pieces
+        // Check Lane6 for attacking pieces
         if (checkDiag(col, row, isWhite, -1, -1) && !lock) {
             attacker = true;
             lock = true;
@@ -99,7 +98,7 @@ public class Check extends Thread {
 
         // TODO Check Lane7 for attacking pieces
 
-        // TODO Check Lane8 for attacking pieces
+        // Check Lane8 for attacking pieces
         if (checkDiag(col, row, isWhite, 1, -1) && !lock) {
             attacker = true;
             lock = true;
@@ -139,7 +138,7 @@ public class Check extends Thread {
         return false;
     }
 
-    public void checkLane() {
+    public void checkLane(int col, int row, boolean isWhite) {
 
     }
  }
