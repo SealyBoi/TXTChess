@@ -18,6 +18,9 @@ public class Main {
     // Declaring text color for important messages
     public static final String ANSI_YELLOW = "\u001B[33m";
 
+    // Declaring string to clear screen
+    public static final String ANSI_CLEAR = "\033[H\033[2J";
+
     // Display main screen and options
     public static void main (String[] args) {
         mainMenu();
@@ -49,13 +52,20 @@ public class Main {
 
         switch (input.toLowerCase()) {
             case "play":
+                clearScreen();
                 startGame();
             break;
             case "quit":
+                clearScreen();
                 quitGame();
             break;
         }
 
+    }
+
+    public static void clearScreen() {
+        System.out.print(ANSI_CLEAR);  
+        System.out.flush();  
     }
 
     // Initialize board and send it to the play loop
@@ -126,11 +136,12 @@ public class Main {
                                     // Move piece, switch turns, and print the new board
                                     board.movePiece(prevCol, prevRow, col, row);
                                     whiteToMove = !whiteToMove;
+                                    clearScreen();
                                     board.printBoard(whiteToMove);
                                     // Check if player has been put in check
                                     if (board.inCheck(whiteToMove)) {
                                         // Check if player has been put in checkmate
-                                        if (board.checkForMate()) {
+                                        if (board.checkForMate(whiteToMove)) {
                                             // TODO Check for mate
                                         } else {
                                             System.out.println(ANSI_YELLOW + "Check!" + ANSI_RESET);

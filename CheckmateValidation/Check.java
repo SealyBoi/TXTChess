@@ -73,40 +73,53 @@ public class Check extends Thread {
 
     public void run() {
         // Check Lane1 for attacking pieces
-        if (checkDiag(col, row, isWhite, -1, 1) && !lock) {
-            attacker = true;
-            lock = true;
+        if (checkLane(col, row, isWhite, -1, 1) && !lock) {
+            activateLock();
         }
 
-        // TODO Check Lane2 for attacking pieces
+        // Check Lane2 for attacking pieces
+        if (checkLane(col, row, isWhite, 0, 1) && !lock) {
+            activateLock();
+        }
 
         // Check Lane3 for attacking pieces
-        if (checkDiag(col, row, isWhite, 1, 1) && !lock) {
-            attacker = true;
-            lock = true;
+        if (checkLane(col, row, isWhite, 1, 1) && !lock) {
+            activateLock();
         }
 
-        // TODO Check Lane4 for attacking pieces
+        // Check Lane4 for attacking pieces
+        if (checkLane(col, row, isWhite, -1, 0) && !lock) {
+            activateLock();
+        }
 
-        // TODO Check Lane5 for attacking piecces
+        // Check Lane5 for attacking piecces
+        if (checkLane(col, row, isWhite, 1, 0) && !lock) {
+            activateLock();
+        }
 
         // Check Lane6 for attacking pieces
-        if (checkDiag(col, row, isWhite, -1, -1) && !lock) {
-            attacker = true;
-            lock = true;
+        if (checkLane(col, row, isWhite, -1, -1) && !lock) {
+            activateLock();
         }
 
-        // TODO Check Lane7 for attacking pieces
+        // Check Lane7 for attacking pieces
+        if (checkLane(col, row, isWhite, 0, -1) && !lock) {
+            activateLock();
+        }
 
         // Check Lane8 for attacking pieces
-        if (checkDiag(col, row, isWhite, 1, -1) && !lock) {
-            attacker = true;
-            lock = true;
+        if (checkLane(col, row, isWhite, 1, -1) && !lock) {
+            activateLock();
         }
 
     }
 
-    public boolean checkDiag(int col, int row, boolean isWhite, int incCol, int incRow) {
+    public void activateLock() {
+        attacker = true;
+        lock = true;
+    }
+
+    public boolean checkLane(int col, int row, boolean isWhite, int incCol, int incRow) {
         int checkCol = col;
         int checkRow = row;
         while (checkCol + incCol >= 0 && checkCol + incCol <= 7 && checkRow + incRow >= 0 && checkRow + incRow <= 7) {
@@ -116,30 +129,31 @@ public class Check extends Thread {
             if (p != null) {
                 if (p.isWhite() != isWhite) {
                     String pType = p.getPiece().toLowerCase();
-                    System.out.println(pType);
-                    if (checkCol == col - 1 || checkCol == col + 1) {
-                        if (!isWhite && checkRow == row - 1) {
-                            if (pType.equals("p")) {
-                                return true;
-                            }
-                        } else if (isWhite && checkRow == row + 1) {
-                            if (pType.equals("p")) {
-                                return true;
+                    if (incCol == 0 || incRow == 0) {
+                        if (pType.equals("q") || pType.equals("r")) {
+                            return true;
+                        }
+                    } else {
+                        if (checkCol == col - 1 || checkCol == col + 1) {
+                            if (!isWhite && checkRow == row - 1) {
+                                if (pType.equals("p")) {
+                                    return true;
+                                }
+                            } else if (isWhite && checkRow == row + 1) {
+                                if (pType.equals("p")) {
+                                    return true;
+                                }
                             }
                         }
-                    }
-                    if (pType.equals("q") || pType.equals("b")) {
-                        return true;
+                        if (pType.equals("q") || pType.equals("b")) {
+                            return true;
+                        }
                     }
                 }
                 return false;
             }
         }
         return false;
-    }
-
-    public void checkLane(int col, int row, boolean isWhite) {
-
     }
  }
 

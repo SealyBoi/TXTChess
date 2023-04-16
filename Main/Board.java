@@ -8,6 +8,15 @@ import CheckmateValidation.Interceptor;
 import Pieces.*;
 
 public class Board {
+    // Declaring ANSI_RESET so we can reset color
+    public static final String ANSI_RESET = "\u001B[0m";
+
+    // Declaring green background for black pieces
+    public static final String ANSI_BLUE = "\u001B[34m";
+
+    // Declaring white background for white pieces
+    public static final String ANSI_RED = "\u001B[31m";
+
     // Save both kings for later reference
     Pieces whiteKing = new King("k", true, 4, 0);
     Pieces blackKing = new King("K", false, 4, 7);
@@ -194,13 +203,27 @@ public class Board {
     }
 
     // Method called to check if player is in checkmate
-    public boolean checkForMate() {
-        FreeSquare fsThread = new FreeSquare();
-        Interceptor iThread = new Interceptor();
-        Counter cThread = new Counter();
+    public boolean checkForMate(boolean whiteToMove) {
+        King k;
+        if (whiteToMove) {
+            k = (King) whiteKing;
+        } else {
+            k = (King) blackKing;
+        }
+        FreeSquare fsThread = new FreeSquare(board, k.isWhite(), k.getPosition()[0], k.getPosition()[1]);
+        Interceptor iThread = new Interceptor(board, k.isWhite(), k.getPosition()[0], k.getPosition()[1]);
+        Counter cThread = new Counter(board, k.isWhite(), k.getPosition()[0], k.getPosition()[1]);
         fsThread.start();
         iThread.start();
         cThread.start();
+        try {
+            fsThread.join();
+            iThread.join();
+            cThread.join();
+            return !(fsThread.isSafe() && iThread.isSafe() && cThread.isSafe());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 
@@ -209,6 +232,8 @@ public class Board {
         int goal;
         int increment;
         int start;
+        String color;
+        boolean flip = true;
         // Print board depending on which player's turn it is
         if (whiteToMove) {
             start = 0;
@@ -223,13 +248,24 @@ public class Board {
         System.out.print(8 - i + " |");
         for (int j = 0; j < 8; j++) {
             if (board[i][j] != null) {
-                System.out.print(" " + board[i][j].getPiece() + " ");
+                if (board[i][j].isWhite()) {
+                    color = ANSI_RED;
+                } else {
+                    color = ANSI_BLUE;
+                }
+                System.out.print(color + " " + board[i][j].getPiece() + " " + ANSI_RESET);
             } else {
-                System.out.print(" - ");
+                if (flip) {
+                    System.out.print(" - ");
+                } else {
+                    System.out.print (" + ");
+                }
             }
+            flip = !flip;
         }
         System.out.print("|");
         System.out.println();
+        flip = !flip;
        }
        System.out.println("    a  b  c  d  e  f  g  h  ");
     }
