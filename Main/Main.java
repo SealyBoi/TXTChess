@@ -94,6 +94,7 @@ public class Main {
 
         while (!gameOver) {
             input = scan.nextLine();
+
             // String split into [piece, previousColumn, previousRow, column, row]
             indexedInput = input.split("");
 
@@ -107,14 +108,24 @@ public class Main {
 
             // Check if params are out of bounds
             if (!piece.toLowerCase().equals("r") && !piece.toLowerCase().equals("n") && !piece.toLowerCase().equals("b") && !piece.toLowerCase().equals("q") && !piece.toLowerCase().equals("k") && !piece.toLowerCase().equals("p")) {
+                clearScreen();
+                board.printBoard(whiteToMove);
                 System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid piece" + ANSI_RESET);
             } else if (prevCol > 7 || prevCol < 0) {
+                clearScreen();
+                board.printBoard(whiteToMove);
                 System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid previous column" + ANSI_RESET);
             } else if (prevRow > 7 || prevRow < 0) {
+                clearScreen();
+                board.printBoard(whiteToMove);
                 System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid previous row" + ANSI_RESET);
             } else if (col > 7 || col < 0) {
+                clearScreen();
+                board.printBoard(whiteToMove);
                 System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid column" + ANSI_RESET);
             } else if (row > 7 || row < 0) {
+                clearScreen();
+                board.printBoard(whiteToMove);
                 System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid row" + ANSI_RESET);
             } else {
                 // Grab piece player is trying to move from board
@@ -143,21 +154,31 @@ public class Main {
                                         // Check if player has been put in checkmate
                                         if (board.checkForMate(whiteToMove)) {
                                             // TODO Check for mate
+                                            System.out.println(ANSI_YELLOW + "Checkmate!" + ANSI_RESET);
+                                            gameOver = true;
                                         } else {
                                             System.out.println(ANSI_YELLOW + "Check!" + ANSI_RESET);
                                         }
                                     }
                                 } else {
+                                    clearScreen();
+                                    board.printBoard(whiteToMove);
                                     System.out.println(ANSI_RED_BACKGROUND + "[!]Cannot Self Check" + ANSI_RESET);
                                 }
                             } else {
+                                clearScreen();
+                                board.printBoard(whiteToMove);
                                 System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid move" + ANSI_RESET);
                             }
                         } else {
+                            clearScreen();
+                            board.printBoard(whiteToMove);
                             System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid piece at " + indexedInput[1] + indexedInput[2] + ANSI_RESET);
                         }
                     }
                 } else {
+                    clearScreen();
+                    board.printBoard(whiteToMove);
                     System.out.println(ANSI_RED_BACKGROUND + "[!]No piece exists at " + indexedInput[1] + indexedInput[2] + ANSI_RESET);
                 }
             }

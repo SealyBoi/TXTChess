@@ -133,7 +133,7 @@ public class Check extends Thread {
                         if (pType.equals("q") || pType.equals("r")) {
                             return true;
                         }
-                    } else {
+                    } else if (Math.abs(checkCol - col) == Math.abs(checkRow - row)) {
                         if (checkCol == col - 1 || checkCol == col + 1) {
                             if (!isWhite && checkRow == row - 1) {
                                 if (pType.equals("p")) {
@@ -148,6 +148,8 @@ public class Check extends Thread {
                         if (pType.equals("q") || pType.equals("b")) {
                             return true;
                         }
+                    } else if (pType.equals("k") && checkCol == col - 1 || checkCol == col + 1 || checkCol == col && checkRow == row - 1 || checkRow == row + 1 || checkRow == row) {
+                        return true;
                     }
                 }
                 return false;

@@ -6,7 +6,6 @@ JC = javac
 
 CLASSES = \
 		CheckmateValidation/Check.java \
-		CheckmateValidation/Counter.java \
 		CheckmateValidation/FreeSquare.java \
 		CheckmateValidation/Interceptor.java \
 		Pieces/Bishop.java \

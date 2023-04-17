@@ -10,7 +10,7 @@
 /*
 / NOTE Castling is not implemented.
 / NOTE En passant is not implemented.
-/ NOTE Check is halfway implemented. You can be put in check by knights and by any diagonal attacks. (pawns, queens, bishops, etc.)
+/ NOTE Small bug with Checkmate where board will randomly delete pieces while checking for Checkmate.
 / NOTE Checkmate is not implemented, the game ends when the king is captured.
 */
 

@@ -2,7 +2,6 @@ package Main;
 import java.util.Scanner;
 
 import CheckmateValidation.Check;
-import CheckmateValidation.Counter;
 import CheckmateValidation.FreeSquare;
 import CheckmateValidation.Interceptor;
 import Pieces.*;
@@ -37,7 +36,10 @@ public class Board {
     };
 
     // Create current board state
-    private static Pieces[][] board;
+    private Pieces[][] board;
+
+    // Create state check board
+    private Pieces[][] stateBoard;
 
     // Construct board for new game
     public void constructBoard() {
@@ -132,26 +134,6 @@ public class Board {
         return false;
     }
 
-    // Method called to check position of King after King has moved
-    public boolean inCheck(boolean whiteToMove, int newCol, int newRow) {
-        Check chThread;
-        King k;
-        if (whiteToMove) {
-            k = (King) whiteKing;
-        } else {
-            k = (King) blackKing;
-        }
-        chThread = new Check(board, k.isWhite(), newCol, newRow);
-        chThread.start();
-        try {
-            chThread.join();
-            return chThread.kingInCheck();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     // Method called to check position of King at end of turn
     public boolean inCheck(boolean whiteToMove) {
         Check chThread;
@@ -180,51 +162,45 @@ public class Board {
         } else {
             king = (King) blackKing;
         }
-        // If the piece moving is the king, check if he is moving into check
-        if (getPiece(prevCol, prevRow).getPiece().toLowerCase().equals("k")) {
-            if (king.isWhite()) {
-                return inCheck(true, newCol, newRow);
-            } else {
-                return inCheck(false, newCol, newRow);
-            }
+        // Check if king would be put into check after piece moved
+        stateBoard = board;
+        movePiece(prevCol, prevRow, newCol, newRow);
+        boolean causeCheck = false;
+        if (king.isWhite()) {
+            causeCheck = inCheck(true);
+        } else {
+            causeCheck = inCheck(false);
         }
-        // Else check if moving the piece would put the player into check
-        else {
-            movePiece(prevCol, prevRow, newCol, newRow);
-            boolean causeCheck = false;
-            if (king.isWhite()) {
-                causeCheck = inCheck(true);
-            } else {
-                causeCheck = inCheck(false);
-            }
-            movePiece(newCol, newRow, prevCol, prevRow);
-            return causeCheck;
-        }
+        movePiece(newCol, newRow, prevCol, prevRow);
+        board = stateBoard;
+        return causeCheck;
     }
 
     // Method called to check if player is in checkmate
     public boolean checkForMate(boolean whiteToMove) {
         King k;
+        boolean inMate = false;
         if (whiteToMove) {
             k = (King) whiteKing;
         } else {
             k = (King) blackKing;
         }
+        stateBoard = board;
         FreeSquare fsThread = new FreeSquare(board, k.isWhite(), k.getPosition()[0], k.getPosition()[1]);
         Interceptor iThread = new Interceptor(board, k.isWhite(), k.getPosition()[0], k.getPosition()[1]);
-        Counter cThread = new Counter(board, k.isWhite(), k.getPosition()[0], k.getPosition()[1]);
         fsThread.start();
         iThread.start();
-        cThread.start();
         try {
             fsThread.join();
             iThread.join();
-            cThread.join();
-            return !(fsThread.isSafe() && iThread.isSafe() && cThread.isSafe());
+            System.out.println("Free Square: " + fsThread.isSafe());
+            System.out.println("Interceptor: " + iThread.isSafe());
+            inMate = !(fsThread.isSafe() || iThread.isSafe());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return false;
+        board = stateBoard;
+        return inMate;
     }
 
     // Print current board
@@ -233,20 +209,23 @@ public class Board {
         int increment;
         int start;
         String color;
+        String alphabet;
         boolean flip = true;
         // Print board depending on which player's turn it is
         if (whiteToMove) {
             start = 0;
             goal = 8;
             increment = 1;
+            alphabet = "    a  b  c  d  e  f  g  h  ";
         } else {
             start = 7;
             goal = -1;
             increment = -1;
+            alphabet = "    h  g  f  e  d  c  b  a  ";
         }
        for (int i = start; i != goal; i += increment) {
         System.out.print(8 - i + " |");
-        for (int j = 0; j < 8; j++) {
+        for (int j = start; j != goal; j += increment) {
             if (board[i][j] != null) {
                 if (board[i][j].isWhite()) {
                     color = ANSI_RED;
@@ -267,6 +246,6 @@ public class Board {
         System.out.println();
         flip = !flip;
        }
-       System.out.println("    a  b  c  d  e  f  g  h  ");
+       System.out.println(alphabet);
     }
 }
