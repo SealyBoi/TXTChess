@@ -4,10 +4,10 @@ import Pieces.Pieces;
 
 public class FreeSquare extends Thread {
     
-    Pieces[][] board;
-    boolean isWhite;
-    int col;
-    int row;
+    private Pieces[][] board;
+    private boolean isWhite;
+    private int col;
+    private int row;
 
     public FreeSquare(Pieces[][] board, boolean isWhite, int col, int row) {
         this.board = board;

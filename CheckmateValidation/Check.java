@@ -4,10 +4,10 @@ import Pieces.Pieces;
 
 public class Check extends Thread {
 
-    Pieces[][] board;
-    boolean isWhite;
-    int col;
-    int row;
+    private Pieces[][] board;
+    private boolean isWhite;
+    private int col;
+    private int row;
 
     public Check (Pieces[][] board, boolean isWhite, int col, int row) {
         this.board = board;
@@ -52,10 +52,10 @@ public class Check extends Thread {
  */
 
  class LaneChecking extends Thread {
-    Pieces[][] board;
-    boolean isWhite;
-    int col;
-    int row;
+    private Pieces[][] board;
+    private boolean isWhite;
+    private int col;
+    private int row;
 
     public LaneChecking (Pieces[][] board, boolean isWhite, int col, int row) {
         this.board = board;
@@ -169,10 +169,10 @@ public class Check extends Thread {
   */
 
   class KnightChecking extends Thread {
-    Pieces[][] board;
-    boolean isWhite;
-    int col;
-    int row;
+    private Pieces[][] board;
+    private boolean isWhite;
+    private int col;
+    private int row;
 
     public KnightChecking (Pieces[][] board, boolean isWhite, int col, int row) {
         this.board = board;

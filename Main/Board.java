@@ -48,11 +48,7 @@ public class Board {
 
     // Get piece from board
     public Pieces getPiece(int col, int row) {
-        if (board[7 - row][col] != null) {
-            return board[7 - row][col];
-        } else  {
-            return null;
-        }
+        return board[7 - row][col];
     }
 
     // Move piece from previous position to new position
