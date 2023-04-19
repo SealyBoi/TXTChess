@@ -10,8 +10,6 @@
 /*
 / NOTE Castling is not implemented.
 / NOTE En passant is not implemented.
-/ NOTE Small bug with Checkmate where board will randomly delete pieces while checking for Checkmate.
-/ NOTE Checkmate is not implemented, the game ends when the king is captured.
 */
 
 / * THIS IS STILL A WORK IN PROGRESS * /
