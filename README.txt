@@ -9,7 +9,6 @@
 
 /*
 / NOTE Castling is not implemented.
-/ NOTE En passant is not implemented.
 */
 
 / * THIS IS STILL A WORK IN PROGRESS * /

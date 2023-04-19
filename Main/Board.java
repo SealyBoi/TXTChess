@@ -1,4 +1,5 @@
 package Main;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import CheckmateValidation.Check;
@@ -39,9 +40,13 @@ public class Board {
     // Create current board state
     private Pieces[][] board = new Pieces[8][8];
 
+    // Create list of pawns that can trigger en passant
+    private ArrayList<Pawn> epList;
+
     // Construct board for new game
     public void constructBoard() {
         board = startingBoard;
+        epList = new ArrayList<Pawn>();
     }
 
     // Get piece from board
@@ -126,6 +131,38 @@ public class Board {
             return true;
         }
         return false;
+    }
+
+    // Check if piece is a pawn and is in en passant
+    public boolean canEnPassant(int col, int row) {
+        Pieces square = getPiece(col, row);
+        if (square != null && square.getPiece().toLowerCase().equals("p")) {
+            Pawn p = (Pawn) square;
+            if (p.getEP()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void triggerEnPassant(int col, int row) {
+        board[7 - row][col] = null;
+    }
+
+    // Add Pawn to En Passant list
+    public void addEP(int col, int row) {
+        epList.add((Pawn) getPiece(col, row));
+    }
+
+    // Remove Pawns that have exited En Passant
+    public void updateEP(boolean isWhite) {
+        for (int i = 0; i < epList.size(); i++) {
+            if (epList.get(i).isWhite() == isWhite) {
+                epList.get(i).flipEP();
+                epList.remove(i);
+                i--;
+            }
+        }
     }
 
     // Method called to check position of King at end of turn

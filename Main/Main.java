@@ -108,25 +108,15 @@ public class Main {
 
             // Check if params are out of bounds
             if (!piece.toLowerCase().equals("r") && !piece.toLowerCase().equals("n") && !piece.toLowerCase().equals("b") && !piece.toLowerCase().equals("q") && !piece.toLowerCase().equals("k") && !piece.toLowerCase().equals("p")) {
-                clearScreen();
-                board.printBoard(whiteToMove);
-                System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid piece" + ANSI_RESET);
+                printError("[!]Invalid piece", whiteToMove, board);
             } else if (prevCol > 7 || prevCol < 0) {
-                clearScreen();
-                board.printBoard(whiteToMove);
-                System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid previous column" + ANSI_RESET);
+                printError("[!]Invalid previous column", whiteToMove, board);
             } else if (prevRow > 7 || prevRow < 0) {
-                clearScreen();
-                board.printBoard(whiteToMove);
-                System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid previous row" + ANSI_RESET);
+                printError("[!]Invalid previous row", whiteToMove, board);
             } else if (col > 7 || col < 0) {
-                clearScreen();
-                board.printBoard(whiteToMove);
-                System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid column" + ANSI_RESET);
+                printError("[!]Invalid column", whiteToMove, board);
             } else if (row > 7 || row < 0) {
-                clearScreen();
-                board.printBoard(whiteToMove);
-                System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid row" + ANSI_RESET);
+                printError("[!]Invalid row", whiteToMove, board);
             } else {
                 // Grab piece player is trying to move from board
                 Pieces currPiece = board.getPiece(prevCol, prevRow);
@@ -147,55 +137,60 @@ public class Main {
                                     // Move piece, switch turns, and print the new board
                                     board.movePiece(prevCol, prevRow, col, row);
                                     whiteToMove = !whiteToMove;
-                                    clearScreen();
+                                    //clearScreen();
                                     board.printBoard(whiteToMove);
                                     // Check if player has been put in check
                                     if (board.inCheck(whiteToMove)) {
                                         // Check if player has been put in checkmate
                                         if (board.checkForMate(whiteToMove)) {
                                             // Check for mate
-                                            System.out.println(ANSI_YELLOW + "Checkmate!" + ANSI_RESET);
+                                            printMessage("Checkmate!");
                                             gameOver = true;
                                         } else {
-                                            System.out.println(ANSI_YELLOW + "Check!" + ANSI_RESET);
+                                            printMessage("Check!");
                                         }
                                     }
+                                    board.updateEP(whiteToMove);
                                 } else {
-                                    clearScreen();
-                                    board.printBoard(whiteToMove);
-                                    System.out.println(ANSI_RED_BACKGROUND + "[!]Cannot Self Check" + ANSI_RESET);
+                                    printError("[!]Cannot Self Check", whiteToMove, board);
                                 }
                             } else {
-                                clearScreen();
-                                board.printBoard(whiteToMove);
-                                System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid move" + ANSI_RESET);
+                                printError("[!]Invalid move", whiteToMove, board);
                             }
                         } else {
-                            clearScreen();
-                            board.printBoard(whiteToMove);
-                            System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid piece at " + indexedInput[1] + indexedInput[2] + ANSI_RESET);
+                            printError("[!]Invalid piece at " + indexedInput[1] + indexedInput[2], whiteToMove, board);
                         }
                     }
                 } else {
-                    clearScreen();
-                    board.printBoard(whiteToMove);
-                    System.out.println(ANSI_RED_BACKGROUND + "[!]No piece exists at " + indexedInput[1] + indexedInput[2] + ANSI_RESET);
+                    printError("[!]No piece exists at " + indexedInput[1] + indexedInput[2], whiteToMove, board);
                 }
             }
 
             // Print current turn
             if (whiteToMove && !gameOver) {
-                System.out.println(ANSI_YELLOW + "[*]White to move" + ANSI_RESET);
+                printMessage("[*]White to move");
             } else {
-                System.out.println(ANSI_YELLOW + "[*]Black to move" + ANSI_RESET);
+                printMessage("[*]Black to move");
             }
 
         }
 
         // Print end game message and return user to Main Screen
-        System.out.println(ANSI_YELLOW + "[!]Press enter to return to the main menu" + ANSI_RESET);
+        printMessage("[!]Press enter to return to the main menu");
         input = scan.nextLine();
         mainMenu();
+    }
+
+    // Throw Error
+    public static void printError(String message, boolean whiteToMove, Board board) {
+        clearScreen();
+        board.printBoard(whiteToMove);
+        System.out.println(ANSI_RED_BACKGROUND + message + ANSI_RESET);
+    }
+
+    // Print important messages
+    public static void printMessage(String message) {
+        System.out.println(ANSI_YELLOW + message + ANSI_RESET);
     }
 
     // Convert alphabetic character to an integer to obtain column value
