@@ -1,8 +1,17 @@
 package CheckmateValidation;
 
 import Pieces.Pieces;
+import Util.CopyBoard;
 
-public class FreeSquare extends Thread {
+public class FreeSquare extends Thread {// Declaring ANSI_RESET so we can reset color
+    // Declaring ANSI_RESET so we can reset color
+    public static final String ANSI_RESET = "\u001B[0m";
+
+    // Declaring green background for black pieces
+    public static final String ANSI_BLUE = "\u001B[34m";
+
+    // Declaring white background for white pieces
+    public static final String ANSI_RED = "\u001B[31m";
     
     private Pieces[][] board;
     private boolean isWhite;
@@ -56,6 +65,7 @@ public class FreeSquare extends Thread {
 
     // Check if moving to given position would cause another check
     private boolean checkBoard(int col, int row) {
+        Pieces[][] stateBoard = CopyBoard.copyBoard(board);
         movePiece(this.col, this.row, col, row);
         Check chThread = new Check(board, isWhite, col, row);
         boolean result = false;
@@ -67,6 +77,7 @@ public class FreeSquare extends Thread {
             e.printStackTrace();
         }
         movePiece(col, row, this.col, this.row);
+        board = CopyBoard.copyBoard(stateBoard);
         return result;
     }
 

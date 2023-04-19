@@ -1,6 +1,7 @@
 package CheckmateValidation;
 
 import Pieces.Pieces;
+import Util.CopyBoard;
 
 public class Interceptor extends Thread {
 
@@ -16,6 +17,7 @@ public class Interceptor extends Thread {
         this.row = row;
     }
 
+    Pieces[][] stateBoard;
     boolean safe = true;
     int[] attackerPos = new int[2];
     int[] defenderPos = new int[2];
@@ -141,6 +143,10 @@ public class Interceptor extends Thread {
             }
         }
 
+        if (!lock) {
+            throw new Error("No attacker found");
+        }
+
         int aCol = attackerPos[0];
         int aRow = attackerPos[1];
         int checkCol = col + colInc;
@@ -181,22 +187,22 @@ public class Interceptor extends Thread {
                 if (incCol == 0 || incRow == 0) {
                     if (pType.equals("q") || pType.equals("r")) {
                         return updatePos(checkCol, checkRow, lfd, p);
-                    } else if (!lfd && pType.equals("k") && checkCol == col - 1 || checkCol == col + 1 || checkCol == col && checkRow == row - 1 || checkRow == row + 1 || checkRow == row) {
+                    } else if (!lfd && pType.equals("k") && (checkCol == col - 1 || checkCol == col + 1 || checkCol == col) && (checkRow == row - 1 || checkRow == row + 1 || checkRow == row)) {
                         return updatePos(checkCol, checkRow, lfd, p);
-                    }
-                } else {
+                    } else return false;
+                } else if (Math.abs(checkCol - col) == Math.abs(checkRow - row)){
                     if (checkCol == attackerPos[0] - 1 || checkCol == attackerPos[0] + 1) {
                         if (pType.equals("p")) {
                             if (!isWhite && checkRow == attackerPos[1] - 1 || isWhite && checkRow == attackerPos[1] + 1) {
                                 return updatePos(checkCol, checkRow, lfd, p);
-                            }
+                            } else return false;
                         }
                     }
                     if (pType.equals("q") || pType.equals("b")) {
                         return updatePos(checkCol, checkRow, lfd, p);
-                    } else if (!lfd && pType.equals("k") && checkCol == col - 1 || checkCol == col + 1 || checkCol == col && checkRow == row - 1 || checkRow == row + 1 || checkRow == row) {
+                    } else if (!lfd && pType.equals("k") && (checkCol == col - 1 || checkCol == col + 1 || checkCol == col) && (checkRow == row - 1 || checkRow == row + 1 || checkRow == row)) {
                         return updatePos(checkCol, checkRow, lfd, p);
-                   }
+                   } else return false;
                 }
             }
         }
@@ -277,6 +283,7 @@ public class Interceptor extends Thread {
 
     // Check if moving to given position would cause another check
     private boolean checkBoard(int col, int row) {
+        stateBoard = CopyBoard.copyBoard(board);
         movePiece(defenderPos[0], defenderPos[1], col, row);
         Check chThread = new Check(board, isWhite, this.col, this.row);
         boolean result = false;
@@ -288,6 +295,7 @@ public class Interceptor extends Thread {
             e.printStackTrace();
         }
         movePiece(col, row, defenderPos[0], defenderPos[1]);
+        board = CopyBoard.copyBoard(stateBoard);
         return result;
     }
 

@@ -5,6 +5,7 @@ import CheckmateValidation.Check;
 import CheckmateValidation.FreeSquare;
 import CheckmateValidation.Interceptor;
 import Pieces.*;
+import Util.CopyBoard;
 
 public class Board {
     // Declaring ANSI_RESET so we can reset color
@@ -36,10 +37,7 @@ public class Board {
     };
 
     // Create current board state
-    private Pieces[][] board;
-
-    // Create state check board
-    private Pieces[][] stateBoard;
+    private Pieces[][] board = new Pieces[8][8];
 
     // Construct board for new game
     public void constructBoard() {
@@ -158,8 +156,9 @@ public class Board {
         } else {
             king = (King) blackKing;
         }
+        // Create state check board
+        Pieces[][] stateBoard = CopyBoard.copyBoard(board);
         // Check if king would be put into check after piece moved
-        stateBoard = board;
         movePiece(prevCol, prevRow, newCol, newRow);
         boolean causeCheck = false;
         if (king.isWhite()) {
@@ -168,7 +167,7 @@ public class Board {
             causeCheck = inCheck(false);
         }
         movePiece(newCol, newRow, prevCol, prevRow);
-        board = stateBoard;
+        board = CopyBoard.copyBoard(stateBoard);
         return causeCheck;
     }
 
@@ -181,21 +180,20 @@ public class Board {
         } else {
             k = (King) blackKing;
         }
-        stateBoard = board;
-        FreeSquare fsThread = new FreeSquare(board, k.isWhite(), k.getPosition()[0], k.getPosition()[1]);
-        Interceptor iThread = new Interceptor(board, k.isWhite(), k.getPosition()[0], k.getPosition()[1]);
+        // Create state check board
+        Pieces[][] fsBoard = CopyBoard.copyBoard(board);
+        Pieces[][] iBoard = CopyBoard.copyBoard(board);
+        FreeSquare fsThread = new FreeSquare(fsBoard, k.isWhite(), k.getPosition()[0], k.getPosition()[1]);
+        Interceptor iThread = new Interceptor(iBoard, k.isWhite(), k.getPosition()[0], k.getPosition()[1]);
         fsThread.start();
         iThread.start();
         try {
             fsThread.join();
             iThread.join();
-            System.out.println("Free Square: " + fsThread.isSafe());
-            System.out.println("Interceptor: " + iThread.isSafe());
             inMate = !(fsThread.isSafe() || iThread.isSafe());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        board = stateBoard;
         return inMate;
     }
 
@@ -244,4 +242,5 @@ public class Board {
        }
        System.out.println(alphabet);
     }
+
 }

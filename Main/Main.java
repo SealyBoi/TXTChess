@@ -153,7 +153,7 @@ public class Main {
                                     if (board.inCheck(whiteToMove)) {
                                         // Check if player has been put in checkmate
                                         if (board.checkForMate(whiteToMove)) {
-                                            // TODO Check for mate
+                                            // Check for mate
                                             System.out.println(ANSI_YELLOW + "Checkmate!" + ANSI_RESET);
                                             gameOver = true;
                                         } else {
