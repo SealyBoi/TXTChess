@@ -6,10 +6,12 @@ public class King extends Pieces{
 
     private String piece;
     private Boolean isWhite;
+    private int[] position;
 
-    public King (String piece, boolean isWhite) {
+    public King (String piece, boolean isWhite, int col, int row) {
         this.piece = piece;
         this.isWhite = isWhite;
+        this.position = new int[]{col, row};
     }
 
     @Override
@@ -20,6 +22,14 @@ public class King extends Pieces{
     @Override
     public boolean isWhite() {
         return isWhite;
+    }
+
+    public void updatePosition(int col, int row) {
+        position = new int[]{col, row};
+    }
+
+    public int[] getPosition() {
+        return position;
     }
 
     @Override
