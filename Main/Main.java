@@ -137,7 +137,7 @@ public class Main {
                                     // Move piece, switch turns, and print the new board
                                     board.movePiece(prevCol, prevRow, col, row);
                                     whiteToMove = !whiteToMove;
-                                    //clearScreen();
+                                    clearScreen();
                                     board.printBoard(whiteToMove);
                                     // Check if player has been put in check
                                     if (board.inCheck(whiteToMove)) {

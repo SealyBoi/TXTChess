@@ -6,6 +6,7 @@ public class Rook extends Pieces{
 
     private String piece;
     private Boolean isWhite;
+    private Boolean hasMoved = false;
 
     public Rook (String piece, boolean isWhite) {
         this.piece = piece;
@@ -22,6 +23,20 @@ public class Rook extends Pieces{
         return isWhite;
     }
 
+    public boolean hasMoved() {
+        return hasMoved;
+    }
+
+    private void pieceMoved() {
+        hasMoved = true;
+    }
+
+    public void checkMovement() {
+        if (!hasMoved()) {
+            pieceMoved();
+        }
+    }
+
     @Override
     public boolean canMove(Board board, int prevCol, int prevRow, int col, int row) {
         if (prevRow == row) {
@@ -36,10 +51,12 @@ public class Rook extends Pieces{
                 }
             }
             if (board.squareIsEmpty(col, row)) {
+                checkMovement();
                 return true;
             } else if (board.squareContainsAlly(prevCol, prevRow, col, row)) {
                 return false;
             }
+            checkMovement();
             return true;
         } else if (prevCol == col) {
             for (int i = prevRow + 1; i < row; i++) {
@@ -53,10 +70,12 @@ public class Rook extends Pieces{
                 }
             }
             if (board.squareIsEmpty(col, row)) {
+                checkMovement();
                 return true;
             } else if (board.squareContainsAlly(prevCol, prevRow, col, row)) {
                 return false;
             }
+            checkMovement();
             return true;
         }
         return false;
