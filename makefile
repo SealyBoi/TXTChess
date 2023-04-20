@@ -5,6 +5,9 @@ JC = javac
 		$(JC) $(JFLAGS) $*.java
 
 CLASSES = \
+		Network/Server.java \
+		Network/Client.java \
+		Network/Network.java \
 		CheckmateValidation/Check.java \
 		CheckmateValidation/FreeSquare.java \
 		CheckmateValidation/Interceptor.java \
