@@ -7,11 +7,7 @@
   ####  #    # ######  ####   ####  ##  ####  #    #   ##   #    # 
 ===================================================================
 
-/*
-/ NOTE Castling is not implemented.
-*/
-
-/ * THIS IS STILL A WORK IN PROGRESS * /
+/ * This is the finished product for a two-player game of chess with no chess AI * /
 
 This is my rendition of chess, but in a txt format.
 
