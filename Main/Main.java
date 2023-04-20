@@ -124,11 +124,13 @@ public class Main {
         String input;
         String[] indexedInput;
         boolean firstMove = false;
-        if (isServer) {
-            firstMove = true;
-            network.readInput();
-        } else {
-            network.sendOutput(null);
+        if (isMultiplayer) {
+            if (isServer) {
+                firstMove = true;
+                network.readInput();
+            } else {
+                network.sendOutput(null);
+            }
         }
 
         GAME:
@@ -241,7 +243,9 @@ public class Main {
         // Print end game message and return user to Main Screen
         printMessage("[!]Press enter to return to the main menu");
         input = scan.nextLine();
-        network.closeNetwork();
+        if (isMultiplayer) {
+            network.closeNetwork();
+        }
         mainMenu();
     }
 
