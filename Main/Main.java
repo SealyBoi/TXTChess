@@ -92,6 +92,7 @@ public class Main {
         String input;
         String[] indexedInput;
 
+        GAME:
         while (!gameOver) {
             input = scan.nextLine();
 
@@ -100,11 +101,24 @@ public class Main {
 
             // TODO Add input validation
             // prevCol & prevRow refer to the piece's last position, while col & row refer to the piece's requested new position
-            String piece = indexedInput[0];
-            int prevCol = convertToInt(indexedInput[1]) - 1;
-            int prevRow = Integer.parseInt(indexedInput[2]) - 1;
-            int col = convertToInt(indexedInput[3]) - 1;
-            int row = Integer.parseInt(indexedInput[4]) - 1;
+            String piece;
+            int prevCol, prevRow, col, row;
+            if (indexedInput.length < 5) {
+                printError("[!]Invalid input", whiteToMove, board);
+                printTurn(whiteToMove, gameOver);
+                continue GAME;
+            }
+            try {
+                piece = indexedInput[0];
+                prevCol = convertToInt(indexedInput[1]) - 1;
+                prevRow = Integer.parseInt(indexedInput[2]) - 1;
+                col = convertToInt(indexedInput[3]) - 1;
+                row = Integer.parseInt(indexedInput[4]) - 1;
+            } catch (NumberFormatException e) {
+                printError("[!]Invalid input", whiteToMove, board);
+                printTurn(whiteToMove, gameOver);
+                continue GAME;
+            }
 
             // Check if params are out of bounds
             if (!piece.toLowerCase().equals("r") && !piece.toLowerCase().equals("n") && !piece.toLowerCase().equals("b") && !piece.toLowerCase().equals("q") && !piece.toLowerCase().equals("k") && !piece.toLowerCase().equals("p")) {
@@ -167,11 +181,7 @@ public class Main {
             }
 
             // Print current turn
-            if (whiteToMove && !gameOver) {
-                printMessage("[*]White to move");
-            } else {
-                printMessage("[*]Black to move");
-            }
+            printTurn(whiteToMove, gameOver);
 
         }
 
@@ -179,6 +189,15 @@ public class Main {
         printMessage("[!]Press enter to return to the main menu");
         input = scan.nextLine();
         mainMenu();
+    }
+
+    // Print current turn
+    public static void printTurn(boolean whiteToMove, boolean gameOver) {
+        if (whiteToMove && !gameOver) {
+            printMessage("[*]White to move");
+        } else {
+            printMessage("[*]Black to move");
+        }
     }
 
     // Throw Error
