@@ -96,49 +96,65 @@ public class Interceptor extends Thread {
         }
         // Check Knight1 for attacking piece
         if (!lock && col - 1 >= 0 && row + 2 <= 7) {
-            if (checkPos(col - 1, row + 2, isWhite, false)) {
+            if (checkKnight(col - 1, row + 2, isWhite, false)) {
+                colInc = -1;
+                rowInc = 2;
                 lock = true;
             }
         }
         // Check Knight2 for attacking piece
         if (!lock && col + 1 <= 7 && row + 2 <= 7) {
-            if (checkPos(col + 1, row + 2, isWhite, false)) {
+            if (checkKnight(col + 1, row + 2, isWhite, false)) {
+                colInc = 1;
+                rowInc = 2;
                 lock = true;
             }
         }
         // Check Knight3 for attacking piece
         if (!lock && col - 2 >= 0 && row + 1 <= 7) {
-            if (checkPos(col - 2, row + 1, isWhite, false)) {
+            if (checkKnight(col - 2, row + 1, isWhite, false)) {
+                colInc = -2;
+                rowInc = 1;
                 lock = true;
             }
         }
         // Check Knight4 for attacking piece
         if (!lock && col + 2 <= 7 && row + 1 <= 7) {
-            if (checkPos(col + 2, row + 1, isWhite, false)) {
+            if (checkKnight(col + 2, row + 1, isWhite, false)) {
+                colInc = 2;
+                rowInc = 1;
                 lock = true;
             }
         }
         // Check Knight5 for attacking piece
         if (!lock && col - 2 >= 0 && row - 1 >= 0) {
-            if (checkPos(col - 2, row - 1, isWhite, false)) {
+            if (checkKnight(col - 2, row - 1, isWhite, false)) {
+                colInc = -2;
+                rowInc = -1;
                 lock = true;
             }
         }
         // Check Knight6 for attacking piece
         if (!lock && col + 2 <= 7 && row - 1 >= 0) {
-            if (checkPos(col + 2, row - 1, isWhite, false)) {
+            if (checkKnight(col + 2, row - 1, isWhite, false)) {
+                colInc = 2;
+                rowInc = -1;
                 lock = true;
             }
         }
         // Check Knight7 for attacking piece
         if (!lock && col - 1 >= 0 && row - 2 >= 0) {
-            if (checkPos(col - 1, row - 2, isWhite, false)) {
+            if (checkKnight(col - 1, row - 2, isWhite, false)) {
+                colInc = -1;
+                rowInc = -2;
                 lock = true;
             }
         }
         // Check Knight8 for attacking piece
         if (!lock && col + 1 <= 7 && row - 2 >= 0) {
-            if (checkPos(col + 1, row - 2, isWhite, false)) {
+            if (checkKnight(col + 1, row - 2, isWhite, false)) {
+                colInc = 1;
+                rowInc = -2;
                 lock = true;
             }
         }
@@ -191,11 +207,15 @@ public class Interceptor extends Thread {
                         return updatePos(checkCol, checkRow, lfd, p);
                     } else return false;
                 } else if (Math.abs(checkCol - col) == Math.abs(checkRow - row)){
-                    if (checkCol == attackerPos[0] - 1 || checkCol == attackerPos[0] + 1) {
-                        if (pType.equals("p")) {
-                            if (!isWhite && checkRow == attackerPos[1] - 1 || isWhite && checkRow == attackerPos[1] + 1) {
+                    if (pType.equals("p")) {
+                        if (lfd && (checkCol == attackerPos[0] - 1 || checkCol == attackerPos[0] + 1)) {
+                            if (pType.equals("p")) {
+                                if (checkRow == attackerPos[1] - 1 || checkRow == attackerPos[1] + 1) {
+                                    return updatePos(checkCol, checkRow, lfd, p);
+                                } else return false;
+                            }
+                        } else if (!lfd && (checkCol == col + 1 || checkCol == col - 1) && (checkRow == row + 1 || checkRow == row - 1)) {
                                 return updatePos(checkCol, checkRow, lfd, p);
-                            } else return false;
                         }
                     }
                     if (pType.equals("q") || pType.equals("b")) {
@@ -209,12 +229,12 @@ public class Interceptor extends Thread {
         return false;
     }
 
-    private boolean checkPos(int col, int row, boolean isWhite, boolean lfd) {
+    private boolean checkKnight(int col, int row, boolean isWhite, boolean lfd) {
         Pieces p;
 
         p = board[7 - row][col];
         if (p != null) {
-            if (p.isWhite() == isWhite && p.getPiece().toLowerCase().equals("n")) {
+            if (p.getPiece().toLowerCase().equals("n")) {
                 return updatePos(col, row, lfd, p);
             }
         }
@@ -272,7 +292,7 @@ public class Interceptor extends Thread {
                 lock = true;
             }
         }
-        if (!lock && checkPos(col, row, isWhite, true)) {
+        if (!lock && checkKnight(col, row, isWhite, true)) {
             if (checkBoard(col, row)) {
                 result = true;
                 lock = true;

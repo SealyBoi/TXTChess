@@ -2,6 +2,7 @@ package Main;
 
 import java.util.Scanner;
 
+import Network.*;
 import Pieces.Pieces;
 
 public class Main {
@@ -21,13 +22,16 @@ public class Main {
     // Declaring string to clear screen
     public static final String ANSI_CLEAR = "\033[H\033[2J";
 
+    // Declaring Server and Client
+    static Network network;
+
     // Display main screen and options
-    public static void main (String[] args) {
+    public static void main (String[] args) throws Exception {
         mainMenu();
     }
 
     // Main Screen Logo and Options
-    public static void mainMenu() {
+    public static void mainMenu() throws Exception {
 
         System.out.println("===================================================================");
         System.out.println("  ####  #    # ######  ####   ####          #   ##   #    #   ##   ");
@@ -40,12 +44,14 @@ public class Main {
         System.out.println();
 
         System.out.println(">Play");
+        System.out.println(">Host");
+        System.out.println(">Connect");
         System.out.println(">Quit");
 
-        String input = scan.nextLine();
+        String input = scan.nextLine().toLowerCase();
 
         // Input validation
-        while (!input.toLowerCase().equals("play") && !input.toLowerCase().equals("quit")) {
+        while (!input.equals("play") && !input.equals("host") && !input.equals("connect") && !input.equals("quit")) {
             System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid command" + ANSI_RESET);
             input = scan.nextLine();
         }
@@ -53,7 +59,25 @@ public class Main {
         switch (input.toLowerCase()) {
             case "play":
                 clearScreen();
-                startGame();
+                startGame(false, false);
+            break;
+            case "host":
+                network = new Server();
+                try {
+                    network.run();
+                    startGame(true, true);
+                } catch (Exception e) {
+                    throw new Error(e.getMessage());
+                }
+            break;
+            case "connect":
+                network = new Client();
+                try {
+                    network.run();
+                    startGame(true, false);
+                } catch (Exception e) {
+                    throw new Error(e.getMessage());
+                }
             break;
             case "quit":
                 clearScreen();
@@ -69,13 +93,21 @@ public class Main {
     }
 
     // Initialize board and send it to the play loop
-    public static void startGame() {
+    public static void startGame(boolean isMultiplayer, boolean isServer) throws Exception {
 
         Board board = new Board();
         board.constructBoard();
-        board.printBoard(true);
+        if (isMultiplayer) {
+            if (isServer) {
+                board.printBoard(true);
+            } else {
+                board.printBoard(false);
+            }
+        } else {
+            board.printBoard(true);
+        }
         System.out.println(ANSI_YELLOW + "[*]White to move" + ANSI_RESET);
-        play(board);
+        play(board, isMultiplayer, isServer);
 
     }
 
@@ -85,21 +117,33 @@ public class Main {
     }
 
     // Play loop
-    public static void play(Board board) {
+    public static void play(Board board, boolean isMultiplayer, boolean isServer) throws Exception {
 
         boolean gameOver = false;
         boolean whiteToMove = true;
         String input;
         String[] indexedInput;
+        boolean firstMove = false;
+        if (isMultiplayer) {
+            if (isServer) {
+                firstMove = true;
+                network.readInput();
+            } else {
+                network.sendOutput(null);
+            }
+        }
 
         GAME:
         while (!gameOver) {
-            input = scan.nextLine();
+            if (!firstMove && isMultiplayer && (isServer != whiteToMove)) {
+                indexedInput = network.readInput();
+            } else {
+                input = scan.nextLine();
 
-            // String split into [piece, previousColumn, previousRow, column, row]
-            indexedInput = input.split("");
+                // String split into [piece, previousColumn, previousRow, column, row]
+                indexedInput = input.split("");
+            }
 
-            // TODO Add input validation
             // prevCol & prevRow refer to the piece's last position, while col & row refer to the piece's requested new position
             String piece;
             int prevCol, prevRow, col, row;
@@ -150,9 +194,20 @@ public class Main {
                                     }
                                     // Move piece, switch turns, and print the new board
                                     board.movePiece(prevCol, prevRow, col, row);
+                                    if (isMultiplayer && isServer == whiteToMove) {
+                                        network.sendOutput(indexedInput);
+                                    }
                                     whiteToMove = !whiteToMove;
                                     clearScreen();
-                                    board.printBoard(whiteToMove);
+                                    if (isMultiplayer) {
+                                        if (isServer) {
+                                            board.printBoard(true);
+                                        } else {
+                                            board.printBoard(false);
+                                        }
+                                    } else {
+                                        board.printBoard(whiteToMove);
+                                    }
                                     // Check if player has been put in check
                                     if (board.inCheck(whiteToMove)) {
                                         // Check if player has been put in checkmate
@@ -182,12 +237,15 @@ public class Main {
 
             // Print current turn
             printTurn(whiteToMove, gameOver);
-
+            firstMove = false;
         }
 
         // Print end game message and return user to Main Screen
         printMessage("[!]Press enter to return to the main menu");
         input = scan.nextLine();
+        if (isMultiplayer) {
+            network.closeNetwork();
+        }
         mainMenu();
     }
 

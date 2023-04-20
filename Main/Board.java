@@ -1,4 +1,5 @@
 package Main;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -8,7 +9,7 @@ import CheckmateValidation.Interceptor;
 import Pieces.*;
 import Util.CopyBoard;
 
-public class Board {
+public class Board implements Serializable {
     // Declaring ANSI_RESET so we can reset color
     public static final String ANSI_RESET = "\u001B[0m";
 
@@ -47,6 +48,14 @@ public class Board {
     public void constructBoard() {
         board = startingBoard;
         epList = new ArrayList<Pawn>();
+    }
+
+    public Pieces[][] getBoard() {
+        return board;
+    }
+
+    public void updateBoard(Pieces[][] board) {
+        this.board = board;
     }
 
     // Get piece from board
