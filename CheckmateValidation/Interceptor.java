@@ -210,11 +210,11 @@ public class Interceptor extends Thread {
                     if (pType.equals("p")) {
                         if (lfd && (checkCol == attackerPos[0] - 1 || checkCol == attackerPos[0] + 1)) {
                             if (pType.equals("p")) {
-                                if (checkRow == attackerPos[1] - 1 || checkRow == attackerPos[1] + 1) {
+                                if ((isWhite && checkRow == attackerPos[1] - 1) || (!isWhite && checkRow == attackerPos[1] + 1)) {
                                     return updatePos(checkCol, checkRow, lfd, p);
                                 } else return false;
                             }
-                        } else if (!lfd && (checkCol == col + 1 || checkCol == col - 1) && (checkRow == row + 1 || checkRow == row - 1)) {
+                        } else if (!lfd && (checkCol == col + 1 || checkCol == col - 1) && (isWhite && checkRow == row + 1 || !isWhite && checkRow == row - 1)) {
                                 return updatePos(checkCol, checkRow, lfd, p);
                         }
                     }
