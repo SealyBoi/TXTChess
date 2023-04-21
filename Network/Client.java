@@ -18,7 +18,9 @@ public class Client extends Network{
 
     public void run() throws Exception {
         // Create client socket
+        System.out.println("[*]Attempting to connect to server...");
         s = new Socket(host, 9999);
+        System.out.println("[!]Connected to server");
 
         // get the output stream from socket
         outputStream = s.getOutputStream();
@@ -45,7 +47,7 @@ public class Client extends Network{
             }
             return move;
         } catch (Exception e) {
-            throw new Exception("[!]Could not read from Server");
+            throw new Exception("[!]Could not read from Server (Server disconnected)");
         }
     }
 
@@ -54,7 +56,7 @@ public class Client extends Network{
             objectOutputStream.writeObject(move);
             objectOutputStream.flush();
         } catch (Exception e) {
-            throw new Exception("[!]Could not write to Server");
+            throw new Exception("[!]Could not write to Server (Server disconnected)");
         }
     }
 

@@ -80,8 +80,8 @@ public class Board implements Serializable {
     }
 
     // Promote pawn to another piece
-    public void promotePiece(int col, int row) {
-        String input = "";
+    public String promotePiece(int col, int row, String promo) {
+        String input = promo;
         // Input validation
         while (!input.toLowerCase().equals("r") && !input.toLowerCase().equals("b") && !input.toLowerCase().equals("n") && !input.toLowerCase().equals("q")) {
             System.out.println("Select a promotion: ");
@@ -110,6 +110,7 @@ public class Board implements Serializable {
         }
 
         board[7 - row][col] = promotion;
+        return input.toLowerCase();
     }
 
     // Check if square does not contain a piece
@@ -144,11 +145,13 @@ public class Board implements Serializable {
 
     // Check if piece is a pawn and is in en passant
     public boolean canEnPassant(int col, int row) {
-        Pieces square = getPiece(col, row);
-        if (square != null && square.getPiece().toLowerCase().equals("p")) {
-            Pawn p = (Pawn) square;
-            if (p.getEP()) {
-                return true;
+        if (7 - row >= 0) {
+            Pieces square = getPiece(col, row);
+            if (square != null && square.getPiece().toLowerCase().equals("p")) {
+                Pawn p = (Pawn) square;
+                if (p.getEP()) {
+                    return true;
+                }
             }
         }
         return false;

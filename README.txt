@@ -11,9 +11,13 @@
 
 This is my rendition of chess, but in a txt format.
 
-There is very minor error handling when it comes to making incorrect moves as  I was more concerned 
-about creating a complete version. I will probably add error handling later on after my friends tell 
-me they keep losing matches because it crashes anytime they accidentally type the wrong thing.
+You can either play yourself in singleplayer, or you can play with a friend via multiplayer.
+
+-To play singleplayer, or pass-and-play, simply select the 'Play' option.
+
+-To play multiplayer, have Player 1 select 'Host' and Player 2 select 'Connect'.
+ Player 1 will give Player 2 the IP to connect to (the number following the /).
+ Afterwards both players should automatically connect and gameplay should begin.
 
 To compile, simply type 'make' in the txtchess directory.
 To launch application, simply type 'java Main/Main'.
