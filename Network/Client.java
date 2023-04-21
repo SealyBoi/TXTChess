@@ -10,9 +10,15 @@ public class Client extends Network{
     static OutputStream outputStream;
     static ObjectOutputStream objectOutputStream;
 
+    String host;
+
+    public Client (String host) {
+        this.host = host;
+    }
+
     public void run() throws Exception {
         // Create client socket
-        s = new Socket("localhost", 9999);
+        s = new Socket(host, 9999);
 
         // get the output stream from socket
         outputStream = s.getOutputStream();

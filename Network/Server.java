@@ -16,6 +16,21 @@ public class Server extends Network {
         // Create Server Socket
         ss = new ServerSocket(9999);
 
+        // Get IP for Server
+        InetAddress ip;
+        
+        // Get host name
+        String hostname;
+
+        try {
+            ip = InetAddress.getLocalHost();
+            hostname = ip.getHostName();
+            System.out.println("Server IP: " + ip);
+            System.out.println("Server name: " + hostname);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
         // Connect to client socket
         System.out.println("[*]Waiting for player 2 to connect...");
         s = ss.accept();

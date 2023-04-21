@@ -71,7 +71,9 @@ public class Main {
                 }
             break;
             case "connect":
-                network = new Client();
+                System.out.println("Enter server address: ");
+                input = scan.nextLine();
+                network = new Client(input);
                 try {
                     network.run();
                     startGame(true, false);
@@ -189,7 +191,7 @@ public class Main {
                                 // Check if the move would cause the player to be put in check
                                 if (!board.moveWouldCauseCheck(prevCol, prevRow, col, row)) {
                                     // Check if piece is a pawn that is ready to promote
-                                    if (currPiece.getPiece().toLowerCase().equals("p") && (row == 7 && currPiece.isWhite()) || row == 0 && !currPiece.isWhite()) {
+                                    if (currPiece.getPiece().toLowerCase().equals("p") && ((row == 7 && currPiece.isWhite()) || (row == 0 && !currPiece.isWhite()))) {
                                         board.promotePiece(prevCol, prevRow);
                                     }
                                     // Move piece, switch turns, and print the new board
