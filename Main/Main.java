@@ -71,7 +71,9 @@ public class Main {
                 }
             break;
             case "connect":
-                network = new Client();
+                System.out.println("Enter server address: ");
+                input = scan.nextLine();
+                network = new Client(input);
                 try {
                     network.run();
                     startGame(true, false);
