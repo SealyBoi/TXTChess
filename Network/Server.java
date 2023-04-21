@@ -26,7 +26,6 @@ public class Server extends Network {
             ip = InetAddress.getLocalHost();
             hostname = ip.getHostName();
             System.out.println("Server IP: " + ip);
-            System.out.println("Server name: " + hostname);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -58,7 +57,7 @@ public class Server extends Network {
             }
             return move;
         } catch (Exception e) {
-            throw new Exception("[!]Could not read from Client");
+            throw new Exception("[!]Could not read from Client (Client disconnected)");
         }
     }
 
@@ -67,7 +66,7 @@ public class Server extends Network {
             objectOutputStream.writeObject(move);
             objectOutputStream.flush();
         } catch (Exception e) {
-            throw new Exception("[!]Could not write to Client");
+            throw new Exception("[!]Could not write to Client (Client disconnected)");
         }
     }
 

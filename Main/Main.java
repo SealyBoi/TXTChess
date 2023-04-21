@@ -124,7 +124,7 @@ public class Main {
         boolean gameOver = false;
         boolean whiteToMove = true;
         String input;
-        String[] indexedInput;
+        String[] indexedInput = new String[6];
         boolean firstMove = false;
         if (isMultiplayer) {
             if (isServer) {
@@ -143,11 +143,15 @@ public class Main {
                 input = scan.nextLine();
 
                 // String split into [piece, previousColumn, previousRow, column, row]
-                indexedInput = input.split("");
+                String[] tmp = input.split("");
+                for (int i = 0; i < tmp.length; i++) {
+                    indexedInput[i] = tmp[i];
+                }
+                indexedInput[5] = "tmp";
             }
 
             // prevCol & prevRow refer to the piece's last position, while col & row refer to the piece's requested new position
-            String piece;
+            String piece, promotion;
             int prevCol, prevRow, col, row;
             if (indexedInput.length < 5) {
                 printError("[!]Invalid input", whiteToMove, board);
@@ -160,6 +164,7 @@ public class Main {
                 prevRow = Integer.parseInt(indexedInput[2]) - 1;
                 col = convertToInt(indexedInput[3]) - 1;
                 row = Integer.parseInt(indexedInput[4]) - 1;
+                promotion = indexedInput[5];
             } catch (NumberFormatException e) {
                 printError("[!]Invalid input", whiteToMove, board);
                 printTurn(whiteToMove, gameOver);
@@ -192,11 +197,12 @@ public class Main {
                                 if (!board.moveWouldCauseCheck(prevCol, prevRow, col, row)) {
                                     // Check if piece is a pawn that is ready to promote
                                     if (currPiece.getPiece().toLowerCase().equals("p") && ((row == 7 && currPiece.isWhite()) || (row == 0 && !currPiece.isWhite()))) {
-                                        board.promotePiece(prevCol, prevRow);
+                                        promotion = board.promotePiece(prevCol, prevRow, promotion);
                                     }
                                     // Move piece, switch turns, and print the new board
                                     board.movePiece(prevCol, prevRow, col, row);
                                     if (isMultiplayer && isServer == whiteToMove) {
+                                        indexedInput[5] = promotion;
                                         network.sendOutput(indexedInput);
                                     }
                                     whiteToMove = !whiteToMove;
