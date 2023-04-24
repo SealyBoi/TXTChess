@@ -18,13 +18,9 @@ public class Server extends Network {
 
         // Get IP for Server
         InetAddress ip;
-        
-        // Get host name
-        String hostname;
 
         try {
             ip = InetAddress.getLocalHost();
-            hostname = ip.getHostName();
             System.out.println("Server IP: " + ip);
         } catch (UnknownHostException e) {
             e.printStackTrace();

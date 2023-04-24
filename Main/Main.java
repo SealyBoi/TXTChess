@@ -101,12 +101,12 @@ public class Main {
         board.constructBoard();
         if (isMultiplayer) {
             if (isServer) {
-                board.printBoard(true);
+                board.printBoard(true, -1, -1, -1, -1);
             } else {
-                board.printBoard(false);
+                board.printBoard(false, -1, -1, -1, -1);
             }
         } else {
-            board.printBoard(true);
+            board.printBoard(true, -1, -1, -1, -1);
         }
         System.out.println(ANSI_YELLOW + "[*]White to move" + ANSI_RESET);
         play(board, isMultiplayer, isServer);
@@ -209,12 +209,12 @@ public class Main {
                                     clearScreen();
                                     if (isMultiplayer) {
                                         if (isServer) {
-                                            board.printBoard(true);
+                                            board.printBoard(true, prevCol, prevRow, col, row);
                                         } else {
-                                            board.printBoard(false);
+                                            board.printBoard(false, prevCol, prevRow, col, row);
                                         }
                                     } else {
-                                        board.printBoard(whiteToMove);
+                                        board.printBoard(whiteToMove, prevCol, prevRow, col, row);
                                     }
                                     // Check if player has been put in check
                                     if (board.inCheck(whiteToMove)) {
@@ -269,7 +269,7 @@ public class Main {
     // Throw Error
     public static void printError(String message, boolean whiteToMove, Board board) {
         clearScreen();
-        board.printBoard(whiteToMove);
+        board.printBoard(whiteToMove, -1, -1, -1, -1);
         System.out.println(ANSI_RED_BACKGROUND + message + ANSI_RESET);
     }
 

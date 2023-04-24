@@ -19,6 +19,9 @@ public class Board implements Serializable {
     // Declaring white background for white pieces
     public static final String ANSI_RED = "\u001B[31m";
 
+    // Declaring yellow background for showing previous move
+    public static final String ANSI_YELLOW = "\u001B[45m";
+
     // Save both kings for later reference
     Pieces whiteKing = new King("k", true, 4, 0);
     Pieces blackKing = new King("K", false, 4, 7);
@@ -247,7 +250,7 @@ public class Board implements Serializable {
     }
 
     // Print current board
-    public void printBoard(boolean whiteToMove) {
+    public void printBoard(boolean whiteToMove, int prevCol, int prevRow, int col, int row) {
         int goal;
         int increment;
         int start;
@@ -270,17 +273,24 @@ public class Board implements Serializable {
         System.out.print(8 - i + " |");
         for (int j = start; j != goal; j += increment) {
             if (board[i][j] != null) {
-                if (board[i][j].isWhite()) {
+                if (prevCol == j && prevRow == 7 - i || col == j && row == 7 - i) {
+                    color = ANSI_YELLOW;
+                } else if (board[i][j].isWhite()) {
                     color = ANSI_RED;
                 } else {
                     color = ANSI_BLUE;
                 }
                 System.out.print(color + " " + board[i][j].getPiece() + " " + ANSI_RESET);
             } else {
-                if (flip) {
-                    System.out.print(" - ");
+                if (prevCol == j && prevRow == 7 - i || col == j && row == 7 - i) {
+                    color = ANSI_YELLOW;
                 } else {
-                    System.out.print (" + ");
+                    color = "";
+                }
+                if (flip) {
+                    System.out.print(color + " - " + ANSI_RESET);
+                } else {
+                    System.out.print (color + " + " + ANSI_RESET);
                 }
             }
             flip = !flip;
