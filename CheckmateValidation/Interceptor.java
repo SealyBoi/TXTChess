@@ -163,6 +163,7 @@ public class Interceptor extends Thread {
             throw new Error("No attacker found");
         }
 
+        // After finding attacker, we will check every space between the attacker and the king to see if there is a defending piece available
         int aCol = attackerPos[0];
         int aRow = attackerPos[1];
         int checkCol = col + colInc;
@@ -243,61 +244,21 @@ public class Interceptor extends Thread {
 
     public boolean checkForDefender(int col, int row) {
         boolean result = false;
-        boolean lock = false;
-        if (!lock && checkLane(col, row, isWhite, -1, 1, true)) {
-            if (checkBoard(col, row)) {
-                result = true;
-                lock = true;
-            }
-        }
-        if (!lock && checkLane(col, row, isWhite, 0, 1, true)) {
-            if (checkBoard(col, row)) {
-                result = true;
-                lock = true;
-            }
-        }
-        if (!lock && checkLane(col, row, isWhite, 1, 1, true)) {
-            if (checkBoard(col, row)) {
-                result = true;
-                lock = true;
-            }
-        }
-        if (!lock && checkLane(col, row, isWhite, -1, 0, true)) {
-            if (checkBoard(col, row)) {
-                result = true;
-                lock = true;
-            }
-        }
-        if (!lock && checkLane(col, row, isWhite, -1, 0, true)) {
-            if (checkBoard(col, row)) {
-                result = true;
-                lock = true;
-            }
-        }
-        if (!lock && checkLane(col, row, isWhite, -1, -1, true)) {
-            if (checkBoard(col, row)) {
-                result = true;
-                lock = true;
-            }
-        }
-        if (!lock && checkLane(col, row, isWhite, 0, -1, true)) {
-            if (checkBoard(col, row)) {
-                result = true;
-                lock = true;
-            }
-        }
-        if (!lock && checkLane(col, row, isWhite, -1, -1, true)) {
-            if (checkBoard(col, row)) {
-                result = true;
-                lock = true;
-            }
-        }
-        if (!lock && checkKnight(col, row, isWhite, true)) {
-            if (checkBoard(col, row)) {
-                result = true;
-                lock = true;
-            }
-        }
+        
+        result = (
+            (
+                checkLane(col, row, isWhite, -1, 1, true) ||
+                checkLane(col, row, isWhite, 0, 1, true) ||
+                checkLane(col, row, isWhite, 1, 1, true) ||
+                checkLane(col, row, isWhite, -1, 0, true) ||
+                checkLane(col, row, isWhite, -1, 0, true) ||
+                checkLane(col, row, isWhite, -1, -1, true) ||
+                checkLane(col, row, isWhite, 0, -1, true) ||
+                checkLane(col, row, isWhite, -1, -1, true) ||
+                checkKnight(col, row, isWhite, true)
+            ) &&
+            checkBoard(col, row)
+        );
         return result;
     }
 

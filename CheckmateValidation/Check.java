@@ -65,58 +65,22 @@ public class Check extends Thread {
     }
 
     boolean attacker = false;
-    boolean lock = false;
 
     public boolean isAttacking() {
         return attacker;
     }
 
     public void run() {
-        // Check Lane1 for attacking pieces
-        if (checkLane(col, row, isWhite, -1, 1) && !lock) {
-            activateLock();
-        }
-
-        // Check Lane2 for attacking pieces
-        if (checkLane(col, row, isWhite, 0, 1) && !lock) {
-            activateLock();
-        }
-
-        // Check Lane3 for attacking pieces
-        if (checkLane(col, row, isWhite, 1, 1) && !lock) {
-            activateLock();
-        }
-
-        // Check Lane4 for attacking pieces
-        if (checkLane(col, row, isWhite, -1, 0) && !lock) {
-            activateLock();
-        }
-
-        // Check Lane5 for attacking piecces
-        if (checkLane(col, row, isWhite, 1, 0) && !lock) {
-            activateLock();
-        }
-
-        // Check Lane6 for attacking pieces
-        if (checkLane(col, row, isWhite, -1, -1) && !lock) {
-            activateLock();
-        }
-
-        // Check Lane7 for attacking pieces
-        if (checkLane(col, row, isWhite, 0, -1) && !lock) {
-            activateLock();
-        }
-
-        // Check Lane8 for attacking pieces
-        if (checkLane(col, row, isWhite, 1, -1) && !lock) {
-            activateLock();
-        }
-
-    }
-
-    public void activateLock() {
-        attacker = true;
-        lock = true;
+        attacker = (
+            checkLane(col, row, isWhite, -1, 1) ||
+            checkLane(col, row, isWhite, 0, 1) ||
+            checkLane(col, row, isWhite, 1, 1) ||
+            checkLane(col, row, isWhite, -1, 0) ||
+            checkLane(col, row, isWhite, 1, 0) ||
+            checkLane(col, row, isWhite, -1, -1) ||
+            checkLane(col, row, isWhite, 0, -1) ||
+            checkLane(col, row, isWhite, 1, -1)
+        );
     }
 
     public boolean checkLane(int col, int row, boolean isWhite, int incCol, int incRow) {
@@ -135,11 +99,7 @@ public class Check extends Thread {
                         }
                     } else if (Math.abs(checkCol - col) == Math.abs(checkRow - row)) {
                         if (checkCol == col - 1 || checkCol == col + 1) {
-                            if (!isWhite && checkRow == row - 1) {
-                                if (pType.equals("p")) {
-                                    return true;
-                                }
-                            } else if (isWhite && checkRow == row + 1) {
+                            if (!isWhite && checkRow == row - 1 || isWhite && checkRow == row + 1) {
                                 if (pType.equals("p")) {
                                     return true;
                                 }
@@ -152,7 +112,6 @@ public class Check extends Thread {
                         return true;
                     }
                 }
-                return false;
             }
         }
         return false;
@@ -182,86 +141,30 @@ public class Check extends Thread {
     }
 
     boolean attacker = false;
-    boolean lock = false;
 
     public boolean isAttacking() {
         return attacker;
     }
 
     public void run() {
-
-        // Check Knight1 for attacking piece
-        if (col - 1 >= 0 && row + 2 <= 7 && !lock) {
-            if (checkPos(col - 1, row + 2, isWhite)) {
-                attacker = true;
-                lock = true;
-            }
-        }
-
-        // Check Knight2 for attacking piece
-        if (col + 1 <= 7 && row + 2 <= 7 && !lock) {
-            if (checkPos(col + 1, row + 2, isWhite)) {
-                attacker = true;
-                lock = true;
-            }
-        }
-
-        // Check Knight3 for attacking piece
-        if (col - 2 >= 0 && row + 1 <= 7 && !lock) {
-            if (checkPos(col - 2, row + 1, isWhite)) {
-                attacker = true;
-                lock = true;
-            }
-        }
-
-        // Check Knight4 for attacking piece
-        if (col + 2 <= 7 && row + 1 <= 7 && !lock) {
-            if (checkPos(col + 2, row + 1, isWhite)) {
-                attacker = true;
-                lock = true;
-            }
-        }
-
-        // Check Knight5 for attacking piece
-        if (col - 2 >= 0 && row - 1 >= 0 && !lock) {
-            if (checkPos(col - 2, row - 1, isWhite)) {
-                attacker = true;
-                lock = true;
-            }
-        }
-
-        // Check Knight6 for attacking piece
-        if (col + 2 <= 7 && row - 1 >= 0 && !lock) {
-            if (checkPos(col + 2, row - 1, isWhite)) {
-                attacker = true;
-                lock = true;
-            }
-        }
-
-        // Check Knight7 for attacking piece
-        if (col - 1 >= 0 && row - 2 >= 0 && !lock) {
-            if (checkPos(col - 1, row - 2, isWhite)) {
-                attacker = true;
-                lock = true;
-            }
-        }
-
-        // Check Knight8 for attacking piece
-        if (col + 1 <= 7 && row - 2 >= 0 && !lock) {
-            if (checkPos(col + 1, row - 2, isWhite)) {
-                attacker = true;
-                lock = true;
-            }
-        }
-
-        if (!lock) {
-            attacker = false;
-        }
-
+        attacker = (
+            checkPos(col - 1, row + 2, isWhite) ||
+            checkPos(col + 1, row + 2, isWhite) ||
+            checkPos(col - 2, row + 1, isWhite) ||
+            checkPos(col + 2, row + 1, isWhite) ||
+            checkPos(col - 2, row - 1, isWhite) ||
+            checkPos(col + 2, row - 1, isWhite) ||
+            checkPos(col - 1, row - 2, isWhite) ||
+            checkPos(col + 1, row - 2, isWhite)
+        );
     }
 
     public boolean checkPos(int col, int row, boolean isWhite) {
         Pieces p;
+
+        if (col > 7 || col < 0 || row > 7 || row < 0) {
+            return false;
+        }
 
         p = board[7 - row][col];
         if (p != null) {
