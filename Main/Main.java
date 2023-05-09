@@ -2,6 +2,7 @@ package Main;
 
 import java.util.Scanner;
 
+import Elo.Elo;
 import Network.*;
 import Pieces.Pieces;
 
@@ -25,6 +26,9 @@ public class Main {
     // Declaring Server and Client
     static Network network;
 
+    // Declaring Elo
+    static Elo elo = new Elo();
+
     // Display main screen and options
     public static void main (String[] args) throws Exception {
         mainMenu();
@@ -46,12 +50,14 @@ public class Main {
         System.out.println(">Play");
         System.out.println(">Host");
         System.out.println(">Connect");
+        System.out.println(">Rating");
         System.out.println(">Quit");
 
         String input = scan.nextLine().toLowerCase();
+        int port;
 
         // Input validation
-        while (!input.equals("play") && !input.equals("host") && !input.equals("connect") && !input.equals("quit")) {
+        while (!input.equals("play") && !input.equals("host") && !input.equals("connect") && !input.equals("rating") && !input.equals("quit")) {
             System.out.println(ANSI_RED_BACKGROUND + "[!]Invalid command" + ANSI_RESET);
             input = scan.nextLine();
         }
@@ -62,7 +68,9 @@ public class Main {
                 startGame(false, false);
             break;
             case "host":
-                network = new Server();
+                System.out.print("[*]Select a port: ");
+                port = Integer.parseInt(scan.nextLine());
+                network = new Server(port);
                 try {
                     network.run();
                     startGame(true, true);
@@ -71,15 +79,24 @@ public class Main {
                 }
             break;
             case "connect":
-                System.out.println("Enter server address: ");
+                System.out.print("[*]Select a port: ");
+                port = Integer.parseInt(scan.nextLine());
+                System.out.println("[*]Enter server address: ");
                 input = scan.nextLine();
-                network = new Client(input);
+                network = new Client(input, port);
                 try {
                     network.run();
                     startGame(true, false);
                 } catch (Exception e) {
                     throw new Error(e.getMessage());
                 }
+            break;
+            case "rating":
+                System.out.println("[!]Your rating: " + elo.getElo());
+                System.out.println("[!]Press enter to return to menu");
+                input = scan.nextLine();
+                clearScreen();
+                mainMenu();
             break;
             case "quit":
                 clearScreen();
@@ -124,8 +141,9 @@ public class Main {
         boolean gameOver = false;
         boolean whiteToMove = true;
         String input;
-        String[] indexedInput = new String[6];
+        String[] indexedInput = new String[7];
         boolean firstMove = false;
+        double oppElo = 0;
         if (isMultiplayer) {
             if (isServer) {
                 firstMove = true;
@@ -139,6 +157,7 @@ public class Main {
         while (!gameOver) {
             if (!firstMove && isMultiplayer && (isServer != whiteToMove)) {
                 indexedInput = network.readInput();
+                oppElo = Double.parseDouble(indexedInput[6]);
             } else {
                 input = scan.nextLine();
 
@@ -203,6 +222,7 @@ public class Main {
                                     board.movePiece(prevCol, prevRow, col, row);
                                     if (isMultiplayer && isServer == whiteToMove) {
                                         indexedInput[5] = promotion;
+                                        indexedInput[6] = "" + elo.getElo();
                                         network.sendOutput(indexedInput);
                                     }
                                     whiteToMove = !whiteToMove;
@@ -247,6 +267,21 @@ public class Main {
             printTurn(whiteToMove, gameOver);
             firstMove = false;
         }
+
+        // If the game is multiplayer, determine who should win/lose elo
+        // If white wins, then it was black to move when the game ended
+        // If black wins, then it was white to move when the game ended
+        double d = 0.5;
+        if (isMultiplayer) {
+            if (!whiteToMove && isServer) {
+                d = 1;
+            } else {
+                d = 0;
+            }
+        }
+
+        // Display elo changes
+        elo.EloRating(elo.getElo(), oppElo, 30, d);
 
         // Print end game message and return user to Main Screen
         printMessage("[!]Press enter to return to the main menu");

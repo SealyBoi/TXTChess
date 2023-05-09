@@ -5,6 +5,7 @@ JC = javac
 		$(JC) $(JFLAGS) $*.java
 
 CLASSES = \
+		Elo/Elo.java \
 		Network/Server.java \
 		Network/Client.java \
 		Network/Network.java \

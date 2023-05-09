@@ -11,10 +11,15 @@ public class Server extends Network {
     static OutputStream outputStream;
     static ObjectOutputStream objectOutputStream;
 
-    public void run() throws Exception {
+    int port;
 
+    public Server (int port) {
+        this.port = port;
+    }
+
+    public void run() throws Exception {
         // Create Server Socket
-        ss = new ServerSocket(9999);
+        ss = new ServerSocket(port);
 
         // Get IP for Server
         InetAddress ip;

@@ -2,6 +2,7 @@ package Network;
 
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 public class Client extends Network{
     static Socket s;
@@ -9,17 +10,20 @@ public class Client extends Network{
     static ObjectInputStream objectInputStream;
     static OutputStream outputStream;
     static ObjectOutputStream objectOutputStream;
+    static Scanner scan = new Scanner(System.in);
 
     String host;
+    int port;
 
-    public Client (String host) {
+    public Client (String host, int port) {
         this.host = host;
+        this.port = port;
     }
 
     public void run() throws Exception {
         // Create client socket
         System.out.println("[*]Attempting to connect to server...");
-        s = new Socket(host, 9999);
+        s = new Socket(host, port);
         System.out.println("[!]Connected to server");
 
         // get the output stream from socket
